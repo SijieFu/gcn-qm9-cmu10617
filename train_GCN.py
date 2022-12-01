@@ -4,6 +4,9 @@ sys.path.append("torchdrug/")
 from torchdrug import data, datasets, core, models, tasks, utils
 import pickle as pkl
 import numpy as np
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = 1
 
 print(f"Loading QM9 dataset...")
 with open("QM9.pkl", "rb") as f:
@@ -20,7 +23,7 @@ hidden_dim = 256
 lr = 1e-3
 batch_size = 128
 epochs = 100
-gpus = [1]
+gpus = [0]
 
 # Define model
 model = models.GCN(input_dim = dataset.node_feature_dim,
