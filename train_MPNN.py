@@ -21,7 +21,10 @@ hidden_dim = 256
 lr = 1e-3
 batch_size = 32
 epochs = 100
-gpus = [0]
+if torch.cuda.is_available():
+     gpus = [0]
+else:
+     gpus = None
 
 # Define model
 model = models.MPNN(input_dim = dataset.node_feature_dim,

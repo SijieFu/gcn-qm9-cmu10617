@@ -22,7 +22,11 @@ lr = 1e-3
 batch_size = 128
 epochs = 100
 gpus = [0]
-
+if torch.cuda.is_available():
+     gpus = [0]
+else:
+     gpus = None
+     
 # Define model
 model = models.GCN(input_dim = dataset.node_feature_dim,
                    hidden_dims = [256, 128, 64],
