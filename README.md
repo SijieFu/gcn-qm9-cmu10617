@@ -3,18 +3,30 @@ Final team project repo for CMU 10-617 (Fall 2022)
 # Builing the environent
 First create and activate the environment: `conda create -n torchdrug python=3.9; conda activate torchdrug`
 
-Next install pytorch: `pip install torch`
+Next install pytorch: 
 
-Now install torch-geometric and torch-scatter: 
+`conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge`
 
-`pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.13.0+cu117.html`
+Now install pytorch-scatter and pytorch-cluster: 
 
-Clone this repo: `git clone https://github.com/SijieFu/gcn-qm9-cmu10617.git; cd gcn-qm9-cmu10617.git/torchdrug`
+`conda install pytorch-scatter -c pyg`
 
-Install the requirements: `pip install -r requirements.txt`
+`conda install pytorch-cluster -c pyg`
 
-Go back to the root of the repo: `cd ..`
+Clone this repo: 
+
+`git clone https://github.com/SijieFu/gcn-qm9-cmu10617.git; cd gcn-qm9-cmu10617.git/torchdrug`
+
+Install the requirements: 
+
+`pip install -r requirements.txt`
+
+Go back to the root of the repo: 
+
+`cd ..`
 
 Add `QM9.pkl` to the repo from: https://drive.google.com/file/d/1HpZrkkrR_iqbTLPCOglJh9lsxfc7qYVM/view?usp=share_link
 
-Test the MPNN: `python train_MPNN.py`
+Test the MPNN (if you want to use GPUs run the following command in the terminal `export CUDA_VISIBLE_DEVICES=1` to use the A30 on Boltzmann): 
+
+`python train_MPNN.py`
