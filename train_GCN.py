@@ -6,8 +6,6 @@ import pickle as pkl
 import numpy as np
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
 print(f"Loading QM9 dataset...")
 with open("QM9.pkl", "rb") as f:
      qm9 = pkl.load(f)
