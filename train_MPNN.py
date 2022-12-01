@@ -19,8 +19,8 @@ train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths)
 hidden_dim = 256
 lr = 1e-3
 batch_size = 32
-epochs = 1
-gpus = None
+epochs = 100
+gpus = [0]
 
 # Define model
 model = models.MPNN(input_dim = dataset.node_feature_dim,
