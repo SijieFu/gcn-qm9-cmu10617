@@ -151,32 +151,25 @@ class Engine(core.Configurable):
             for batch_id, batch in enumerate(islice(dataloader, batch_per_epoch)):
                 if batch_id > 0 and batch_id % 200 == 0:
                     print(f"\tWorking on batch {batch_id} of {batch_per_epoch}", flush=True)
-                try:
-                    if self.device.type == "cuda":
-                        batch = utils.cuda(batch, device=self.device)
-
-                    loss, metric = model(batch)
-                    if not loss.requires_grad:
-                        raise RuntimeError("Loss doesn't require grad. Did you define any loss in the task?")
-                    loss = loss / gradient_interval
-                    loss.backward()
-                    metrics.append(metric)
-
-                    if batch_id - start_id + 1 == gradient_interval:
-                        self.optimizer.step()
-                        self.optimizer.zero_grad()
-                        
-                        metric = utils.stack(metrics, dim=0)
-                        metric = utils.mean(metric, dim=0)
-                        if self.world_size > 1:
-                            metric = comm.reduce(metric, op="mean")
-                        self.meter.update(metric)
-
-                        metrics = []
-                        start_id = batch_id + 1
-                        gradient_interval = min(batch_per_epoch - start_id, self.gradient_interval)
-                except:
-                    continue
+                if self.device.type == "cuda":
+                    batch = utils.cuda(batch, device=self.device)
+                loss, metric = model(batch)
+                if not loss.requires_grad:
+                    raise RuntimeError("Loss doesn't require grad. Did you define any loss in the task?")
+                loss = loss / gradient_interval
+                loss.backward()
+                metrics.append(metric)
+                if batch_id - start_id + 1 == gradient_interval:
+                    self.optimizer.step()
+                    self.optimizer.zero_grad()
+                    metric = utils.stack(metrics, dim=0)
+                    metric = utils.mean(metric, dim=0)
+                    if self.world_size > 1:
+                        metric = comm.reduce(metric, op="mean")
+                    self.meter.update(metric)
+                    metrics = []
+                    start_id = batch_id + 1
+                    gradient_interval = min(batch_per_epoch - start_id, self.gradient_interval)
             if self.scheduler:
                 self.scheduler.step()
 
