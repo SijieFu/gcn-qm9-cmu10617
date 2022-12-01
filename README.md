@@ -1,7 +1,9 @@
 # gcn-qm9-cmu10617
 Final team project repo for CMU 10-617 (Fall 2022)
 # Builing the environent
-First create and activate the environment: `conda create -n torchdrug python=3.9; conda activate torchdrug`
+First create and activate the environment: 
+
+`conda create -n torchdrug python=3.9; conda activate torchdrug`
 
 Next install pytorch: 
 
