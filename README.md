@@ -27,7 +27,7 @@ Now install pytorch-scatter and pytorch-cluster (Mac):
 
 Clone this repo: 
 
-`git clone https://github.com/SijieFu/gcn-qm9-cmu10617.git; cd gcn-qm9-cmu10617/torchdrug`
+`git clone https://github.com/SijieFu/gcn-qm9-cmu10617.git`
 
 Install the requirements: 
 
