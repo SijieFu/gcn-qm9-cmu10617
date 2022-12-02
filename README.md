@@ -9,15 +9,21 @@ Next install pytorch (Linux):
 
 `conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge`
 
-Next install pytorch (Mac): 
-
-`pip install torch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1`
-
-Now install pytorch-scatter and pytorch-cluster: 
+Now install pytorch-scatter and pytorch-cluster (Linux): 
 
 `conda install pytorch-scatter -c pyg`
 
 `conda install pytorch-cluster -c pyg`
+
+Next install pytorch (Mac): 
+
+`pip install torch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1`
+
+Now install pytorch-scatter and pytorch-cluster (Mac): 
+
+`pip install torch-scatter`
+
+`pip install torch-cluster`
 
 Clone this repo: 
 
