@@ -52,3 +52,20 @@ solver = core.Engine(task,
 
 # Train model
 solver.train(num_epoch=epochs)
+
+# Save model
+os.system("mkdir -p trained_models/")
+with open("trained_models/mpnn_qm9.json") as out_file:
+     json.dump(solver.config_dict(), out_file)
+solver.save("trained_models/mpnn_qm9.pth")
+
+print("---Final evaluation---")
+# Evaluate model on training set
+print("Train:")
+solver.evaluate("train")
+# Evaluate model on validation set
+print("Validation:")
+solver.evaluate("valid")
+# Evaluate model on test set
+print("Test:")
+solver.evaluate("test")
