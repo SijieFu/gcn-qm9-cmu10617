@@ -1,14 +1,11 @@
-import torch
-import sys
+import torch, sys, json, os, pickle
 sys.path.append("torchdrug/")
 from torchdrug import data, datasets, core, models, tasks, utils
-import pickle as pkl
 import numpy as np
-import os
 
 print(f"Loading QM9 dataset...")
 with open("QM9.pkl", "rb") as f:
-     qm9 = pkl.load(f)
+     qm9 = pickle.load(f)
 print("Loaded.")
 dataset = qm9
 
