@@ -55,7 +55,7 @@ solver.train(num_epoch=epochs)
 
 # Save model
 os.system("mkdir -p trained_models/")
-with open("trained_models/mpnn_qm9.json") as out_file:
+with open("trained_models/mpnn_qm9.json", "w") as out_file:
      json.dump(solver.config_dict(), out_file)
 solver.save("trained_models/mpnn_qm9.pth")
 
