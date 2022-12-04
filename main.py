@@ -92,7 +92,6 @@ def main():
      with open(path_to_dataset, "rb") as f:
           dataset = pickle.load(f)
      print(f"\t  Loaded dataset: {path_to_dataset}")
-     sys.exit()
      # include distance in edge feature
      if args.include_distance:
           dataset.data = [edge_importance(mol) for mol in dataset.data]
