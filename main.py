@@ -1,6 +1,7 @@
 import sys, os
 import pickle
 import json
+import os
 import argparse
 from datetime import datetime as dt
 
@@ -13,6 +14,7 @@ import torch.optim as optim
 from torchdrug import data, datasets
 from torchdrug import core, models, tasks
 from torchdrug import utils
+from transforms import *
 
 # Collaborators for this team project
 __author__ = 'Sijie Fu, Nicholas Hattrup, Robert MacKnight'
@@ -34,6 +36,7 @@ parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 parser.add_argument('--epochs', type=int, default=50, help='number of epochs')
 parser.add_argument('--gpu', action='store_true', default=False, help='use GPU')
 parser.add_argument('--train_size', type=float, default=0.8, help='train size')
+parser.add_argument('--include_distance', action='store_true', default=False)
 
 args = parser.parse_args()
 
@@ -78,6 +81,8 @@ with open(args.dataset, "rb") as f:
      dataset = pickle.load(f)
 print("\t  Loaded.")
 
+if args.include_distance:
+     dataset.data = [edge_importance(mol) for mol in dataset.data]
 # Training
 lengths = [int(args.train_size * len(dataset)), int((1 - args.train_size)/2 * len(dataset))]
 lengths += [len(dataset) - sum(lengths)]
