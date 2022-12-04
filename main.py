@@ -24,6 +24,9 @@ __forkedrepo__ = 'https://github.com/DeepGraphLearning/torchdrug'
 
 parser = argparse.ArgumentParser(description='Final team project repo for CMU 10-617 (Fall 2022)')
 
+# to test if our stuff works, a set with only 100 examples will be used
+parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
+
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file')
 parser.add_argument('--out_file', type=str, default="trained_models/my_model", help='path to saved model files')
 parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
@@ -84,9 +87,12 @@ def main():
            f"\t  Solver will be saved to {pickle_out}")
      # load dataset
      print(f"\t  Loading {name} dataset...")
-     with open(args.dataset, "rb") as f:
+
+     path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
+     with open(path_to_dataset, "rb") as f:
           dataset = pickle.load(f)
-     print("\t  Loaded.")
+     print(f"\t  Loaded dataset: {path_to_dataset}")
+     sys.exit()
      # include distance in edge feature
      if args.include_distance:
           dataset.data = [edge_importance(mol) for mol in dataset.data]
