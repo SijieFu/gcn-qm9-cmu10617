@@ -3,6 +3,7 @@ test.py
 test.ipynb
 .*DS_store*
 *.pkl
+dataset/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
