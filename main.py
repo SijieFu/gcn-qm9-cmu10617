@@ -44,10 +44,10 @@ num_gru_layer = args.num_gru_layer
 num_mlp_layer = args.num_mlp_layer
 num_s2s_step = args.num_s2s_step
 if len(hidden) > 1:
-     hidden_dims = args.hidden_dim
+     hidden_dims = [int(i) for i in hidden]
      model = "GCN"
 elif len(hidden) == 1:
-     hidden_dim = args.hidden_dim
+     hidden_dim = int(hidden[0])
      model = "MPNN"
 if model == args.model:
      print(f"---Training {model} model---")
@@ -77,24 +77,25 @@ print(f"\t  Loading {name} dataset...")
 with open(args.dataset, "rb") as f:
      dataset = pickle.load(f)
 print("\t  Loaded.")
+
 # Training
 lengths = [int(args.train_size * len(dataset)), int((1 - args.train_size)/2 * len(dataset))]
 lengths += [len(dataset) - sum(lengths)]
 train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths)
 if model == "MPNN":
-     model = models.MPNN(input_dim = dataset.node_feature_dim,
-                         hidden_dim = hidden_dim,
-                         edge_input_dim = dataset.edge_feature_dim,
-                         num_layer = num_layer,
-                         num_gru_layer = num_gru_layer,
-                         num_mlp_layer = num_mlp_layer,
-                         num_s2s_step = num_s2s_step)
+     t_model = models.MPNN(input_dim = dataset.node_feature_dim,
+                           hidden_dim = hidden_dim,
+                           edge_input_dim = dataset.edge_feature_dim,
+                           num_layer = num_layer,
+                           num_gru_layer = num_gru_layer,
+                           num_mlp_layer = num_mlp_layer,
+                           num_s2s_step = num_s2s_step)
 elif model == "GCN":
-     model = models.GCN(input_dim = dataset.node_feature_dim,
-                        hidden_dims = hidden_dims,
-                        edge_input_dim = dataset.edge_feature_dim)
+     t_model = models.GCN(input_dim = dataset.node_feature_dim,
+                          hidden_dims = hidden_dims,
+                          edge_input_dim = dataset.edge_feature_dim)
 # Define task
-task = tasks.PropertyPrediction(model, task=dataset.tasks)
+task = tasks.PropertyPrediction(t_model, task=dataset.tasks)
 # Optimizer
 optimizer = torch.optim.Adam(task.parameters(), lr=lr)
 # Solver
