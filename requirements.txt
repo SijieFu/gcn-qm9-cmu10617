@@ -10,3 +10,4 @@ lmdb
 fair-esm
 scipy
 gdown
+wandb
