@@ -6,6 +6,7 @@ import argparse
 from datetime import datetime as dt
 
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -124,7 +125,10 @@ def main():
      with open(json_out, "w") as out_file:
           json.dump(solver.config_dict(), out_file)
      solver.save(pickle_out)
-     # evaluate model ...
-
+     # evaluate model ... MAE and RMSE for all properties
+     train_metric = solver.evaluate("train")
+     val_metric = solver.evaluate("valid")
+     test_metric = solver.evaluate("test")
+     
 if __name__ == '__main__':
     main()
