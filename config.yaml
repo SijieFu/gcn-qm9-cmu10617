@@ -1,0 +1,23 @@
+program: train_MPNN.py
+method: bayes
+metric:
+  name: validation_loss
+  goal: minimize
+parameters:
+  learning_rate:
+    min: 0.0001
+    max: 0.1
+  batch_size:
+    values: [16, 32, 64, 128, 256]
+  hidden_dims:
+    values: [128,256]
+  optimizer:
+    values: ["adam"]
+  num_layer:
+    values: [1, 2, 3]
+  num_gru_layer:
+    values: [1, 2, 3]
+  num_mlp_layer:
+    values: [1, 2, 3]
+  num_s2s_step:
+    values: [2,3,4]
