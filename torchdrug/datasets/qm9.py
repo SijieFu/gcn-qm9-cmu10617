@@ -41,9 +41,10 @@ class QM9(data.MoleculeDataset):
 
         zip_file = utils.download(self.url, path, md5=self.md5)
         sdf_file = utils.extract(zip_file, "gdb9.sdf")
-        csv_file = utils.extract(zip_file, "gdb9.sdf.csv")
+        # csv_file = utils.extract(zip_file, "gdb9.sdf.csv")
+        csv_file = './dataset/gdb9.csv'
 
-        self.load_csv(csv_file, smiles_field=None, target_fields=self.target_fields, verbose=verbose)
+        self.load_csv(csv_file, smiles_field="smiles", target_fields=self.target_fields, verbose=verbose)
 
         with utils.no_rdkit_log():
             molecules = Chem.SDMolSupplier(sdf_file, True, True, False)

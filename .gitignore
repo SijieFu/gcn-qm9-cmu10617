@@ -4,7 +4,8 @@ test.ipynb
 .*DS_store*
 *.pkl
 !QM9_mini.pkl
-dataset/
+dataset/*
+!dataset/gdb9.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
