@@ -33,12 +33,16 @@ class QM9(data.MoleculeDataset):
     md5 = "560f62d8e6c992ca0cf8ed8d013f9131"
     target_fields = ["mu", "alpha", "homo", "lumo", "gap", "r2", "zpve", "u0", "u298", "h298", "g298", "cv"]
 
-    def __init__(self, path, node_position=False, verbose=1, *args, **kwargs):
+    def __init__(self, path, node_position=False, verbose=1, **kwargs):
         path = os.path.expanduser(path)
         if not os.path.exists(path):
             os.makedirs(path)
         self.path = path
 
+        minitest = kwargs.get('minitest', False)
+        if kwargs.get('minitest', 'NotFound') != 'NotFound':
+            kwargs.pop('minitest')
+        
         zip_file = utils.download(self.url, path, md5=self.md5)
         sdf_file = utils.extract(zip_file, "gdb9.sdf")
         # csv_file = utils.extract(zip_file, "gdb9.sdf.csv")
@@ -57,7 +61,7 @@ class QM9(data.MoleculeDataset):
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
         for i in indexes:
-            if not ('minitest' in args and i >= 100):
+            if not (minitest and i >= 100):
                 with utils.capture_rdkit_log() as log:
                     mol = molecules[i]
                 if mol is None:
