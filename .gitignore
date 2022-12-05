@@ -6,6 +6,7 @@ test.ipynb
 !QM9_mini.pkl
 dataset/*
 !dataset/gdb9.csv
+!dataset/*mini.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -27,7 +27,7 @@ parser = argparse.ArgumentParser(description='Final team project repo for CMU 10
 # to test if our stuff works, a set with only 100 examples will be used
 parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
 
-parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file')
+parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file in the subfolder ./dataset/')
 parser.add_argument('--out_file', type=str, default="trained_models/my_model", help='path to saved model files')
 parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
 parser.add_argument('--hidden_dim', type=str, default="256", help='space separated string, list for GCN, [single] for MPNN')
@@ -95,13 +95,18 @@ def main():
      print(f"\t  Loading {name} dataset...")
 
      path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
-     if not os.path.exists(path_to_dataset):
-          print(f"\t  Dataset {path_to_dataset} does not exist. Building from scratch.")
-          
-     with open(path_to_dataset, "rb") as f:
-          dataset = pickle.load(f)
-     print(f"\t  Loaded dataset: {path_to_dataset}")
+     if not os.path.exists('./dataset/' + path_to_dataset):
+          print(f"\t  Dataset ./dataset/{path_to_dataset} does not exist. Building from scratch.")
+          dataset = datasets.QM9(path='./dataset/', node_position=True, minitest=args.minitest)
+          with open('./dataset/' + path_to_dataset, "wb") as f:
+               pickle.dump(dataset, f)
+          print(f"\t  Done building: ./dataset/{path_to_dataset}")
+     else:
+          with open('./dataset/' + path_to_dataset, "rb") as f:
+               dataset = pickle.load(f)
+          print(f"\t  Loaded dataset: ./dataset/{path_to_dataset}")
 
+     sys.exit()
      # include distance in edge feature
      if args.include_distance:
           dataset.data = [edge_importance(mol) for mol in dataset.data]
