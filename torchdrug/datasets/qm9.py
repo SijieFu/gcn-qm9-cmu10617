@@ -50,24 +50,24 @@ class QM9(data.MoleculeDataset):
         csv_file = './dataset/gdb9_mini.csv' if minitest else './dataset/gdb9.csv'
 
         self.load_csv(csv_file, smiles_field=None, target_fields=self.target_fields, verbose=verbose)
-
         with utils.no_rdkit_log():
             molecules = Chem.SDMolSupplier(sdf_file, True, True, False)
 
         targets = self.targets
         self.data = []
         self.targets = defaultdict(list)
-        indexes = range(len(molecules)) if not minitest else range(n_mini)
+        indexes = range(len(molecules))
         if minitest:
-            assert n_mini == len(targets[self.target_fields[0]])
+            mol_indexes = indexes[-n_mini:]
+            indexes = range(n_mini)
         else:
-            assert len(molecules) == len(targets[self.target_fields[0]])
-        
+            mol_indexes = indexes
+        assert len(mol_indexes) == len(targets[self.target_fields[0]])
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
-        for i in indexes:
+        for i, mol_i in zip(indexes, mol_indexes):
             with utils.capture_rdkit_log() as log:
-                mol = molecules[i]
+                mol = molecules[mol_i]
             if mol is None:
                 continue
             if log.content:
