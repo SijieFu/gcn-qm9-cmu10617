@@ -40,7 +40,6 @@ class QM9(data.MoleculeDataset):
         self.path = path
 
         minitest = kwargs.get('minitest', False)
-        print('minitest = ', minitest)
         if kwargs.get('minitest', 'NotFound') != 'NotFound':
             kwargs.pop('minitest')
         n_mini = 100
@@ -54,31 +53,32 @@ class QM9(data.MoleculeDataset):
 
         with utils.no_rdkit_log():
             molecules = Chem.SDMolSupplier(sdf_file, True, True, False)
-        if minitest:
-            molecules = molecules[-n_mini:]
 
         targets = self.targets
         self.data = []
         self.targets = defaultdict(list)
-        assert len(molecules) == len(targets[self.target_fields[0]])
-        indexes = range(len(molecules))
+        indexes = range(len(molecules)) if not minitest else range(n_mini)
+        if minitest:
+            assert n_mini == len(targets[self.target_fields[0]])
+        else:
+            assert len(molecules) == len(targets[self.target_fields[0]])
+        
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
         for i in indexes:
-            if not (minitest and len(molecules) - i <= n_mini):
-                with utils.capture_rdkit_log() as log:
-                    mol = molecules[i]
-                if mol is None:
-                    continue
-                if log.content:
-                    print(log.content)
-                d = data.Molecule.from_molecule(mol, **kwargs)
-                if node_position:
-                    with d.node():
-                        d.node_position = torch.tensor([feature.atom_position(atom) for atom in mol.GetAtoms()])
-                self.data.append(d)
-                for k in targets:
-                    self.targets[k].append(targets[k][i])
+            with utils.capture_rdkit_log() as log:
+                mol = molecules[i]
+            if mol is None:
+                continue
+            if log.content:
+                print(log.content)
+            d = data.Molecule.from_molecule(mol, **kwargs)
+            if node_position:
+                with d.node():
+                    d.node_position = torch.tensor([feature.atom_position(atom) for atom in mol.GetAtoms()])
+            self.data.append(d)
+            for k in targets:
+                self.targets[k].append(targets[k][i])
         
         # to dump the pickle file
         # with open("test.pkl", "wb") as outfile:

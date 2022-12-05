@@ -62,6 +62,7 @@ class MoleculeDataset(torch_data.Dataset, core.Configurable):
         if verbose:
             smiles_list = tqdm(smiles_list, "Constructing molecules from SMILES")
         for i, smiles in enumerate(smiles_list):
+            print(smiles)
             if not self.lazy or len(self.data) == 0:
                 mol = Chem.MolFromSmiles(smiles)
                 if not mol:
@@ -112,7 +113,10 @@ class MoleculeDataset(torch_data.Dataset, core.Configurable):
                         if value == "":
                             value = math.nan
                         targets[field].append(value)
-
+        
+        if smiles_field is None:
+            self.targets = targets
+            return
         self.load_smiles(smiles, targets, verbose=verbose, **kwargs)
 
     def load_pickle(self, pkl_file, verbose=0):
