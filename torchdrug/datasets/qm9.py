@@ -33,7 +33,7 @@ class QM9(data.MoleculeDataset):
     md5 = "560f62d8e6c992ca0cf8ed8d013f9131"
     target_fields = ["mu", "alpha", "homo", "lumo", "gap", "r2", "zpve", "u0", "u298", "h298", "g298", "cv"]
 
-    def __init__(self, path, node_position=False, verbose=1, **kwargs):
+    def __init__(self, path, node_position=False, verbose=1, *args, **kwargs):
         path = os.path.expanduser(path)
         if not os.path.exists(path):
             os.makedirs(path)
@@ -57,7 +57,7 @@ class QM9(data.MoleculeDataset):
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
         for i in indexes:
-            if not (kwargs.get('minitest', False) and i >= 100):
+            if not ('minitest' in args and i >= 100):
                 with utils.capture_rdkit_log() as log:
                     mol = molecules[i]
                 if mol is None:
