@@ -41,6 +41,7 @@ parser.add_argument('--epochs', type=int, default=50, help='number of epochs')
 parser.add_argument('--gpu', action='store_true', default=False, help='use GPU')
 parser.add_argument('--train_size', type=float, default=0.8, help='train size')
 parser.add_argument('--include_distance', action='store_true', default=False)
+parser.add_argument('--wandb_logger', action='store_true', default=True)
 
 def main():
      
@@ -115,7 +116,11 @@ def main():
      task = tasks.PropertyPrediction(t_model, task=dataset.tasks)
      # optimizer
      optimizer = torch.optim.Adam(task.parameters(), lr=lr)
-     # train model (logger?)
+     # train model
+     # TODO: wandb_logger
+     if args.wandb_logger:
+          pass
+     ######
      train = not args.load
      print(f"\t  Training new model, saving results to: {args.out_file} .json and .pkl")
      solver = core.Engine(task,
