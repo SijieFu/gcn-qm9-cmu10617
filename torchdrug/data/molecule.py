@@ -235,7 +235,10 @@ class Molecule(Graph):
         edge_list = edge_list[:-2]
         bond_type = torch.tensor(bond_type)[:-2]
         bond_stereo = torch.tensor(bond_stereo)[:-2]
-        stereo_atoms = torch.tensor(stereo_atoms)[:-2]
+        try:
+            stereo_atoms = torch.tensor(stereo_atoms)[:-2]
+        except:
+            stereo_atoms = None
         if len(bond_feature) > 0:
             _bond_feature = torch.tensor(_bond_feature)[:-2]
         else:
