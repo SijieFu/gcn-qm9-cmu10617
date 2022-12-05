@@ -40,18 +40,22 @@ class QM9(data.MoleculeDataset):
         self.path = path
 
         minitest = kwargs.get('minitest', False)
+        print('minitest = ', minitest)
         if kwargs.get('minitest', 'NotFound') != 'NotFound':
             kwargs.pop('minitest')
+        n_mini = 100
         
         zip_file = utils.download(self.url, path, md5=self.md5)
         sdf_file = utils.extract(zip_file, "gdb9.sdf")
         # csv_file = utils.extract(zip_file, "gdb9.sdf.csv")
-        csv_file = './dataset/gdb9.csv'
+        csv_file = './dataset/gdb9_mini.csv' if minitest else './dataset/gdb9.csv'
 
         self.load_csv(csv_file, smiles_field=None, target_fields=self.target_fields, verbose=verbose)
 
         with utils.no_rdkit_log():
             molecules = Chem.SDMolSupplier(sdf_file, True, True, False)
+        if minitest:
+            molecules = molecules[-n_mini:]
 
         targets = self.targets
         self.data = []
@@ -61,7 +65,7 @@ class QM9(data.MoleculeDataset):
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
         for i in indexes:
-            if not (minitest and len(molecules) - i <= 100):
+            if not (minitest and len(molecules) - i <= n_mini):
                 with utils.capture_rdkit_log() as log:
                     mol = molecules[i]
                 if mol is None:
