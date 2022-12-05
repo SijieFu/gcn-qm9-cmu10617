@@ -31,7 +31,7 @@ class QM9(data.MoleculeDataset):
     
     url = "http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/gdb9.tar.gz"
     md5 = "560f62d8e6c992ca0cf8ed8d013f9131"
-    target_fields = ["mu", "alpha", "homo", "lumo", "gap", "r2", "zpve", "u0", "u298", "h298", "g298"]
+    target_fields = ["mu", "alpha", "homo", "lumo", "gap", "r2", "zpve", "u0", "u298", "h298", "g298", "cv"]
 
     def __init__(self, path, node_position=False, verbose=1, mini=False, **kwargs):
         path = os.path.expanduser(path)
@@ -56,22 +56,7 @@ class QM9(data.MoleculeDataset):
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
         for i in indexes:
-            if mini:
-                if i < 100:
-                    with utils.capture_rdkit_log() as log:
-                        mol = molecules[i]
-                    if mol is None:
-                        continue
-                    if log.content:
-                        print(log.content)
-                    d = data.Molecule.from_molecule(mol, **kwargs)
-                    if node_position:
-                        with d.node():
-                            d.node_position = torch.tensor([feature.atom_position(atom) for atom in mol.GetAtoms()])
-                    self.data.append(d)
-                    for k in targets:
-                        self.targets[k].append(targets[k][i])
-            else:
+            if not (mini and i >= 100):
                 with utils.capture_rdkit_log() as log:
                     mol = molecules[i]
                 if mol is None:
@@ -85,7 +70,7 @@ class QM9(data.MoleculeDataset):
                 self.data.append(d)
                 for k in targets:
                     self.targets[k].append(targets[k][i])
-
-                        
-        out = open("test.pkl", "wb")
-        pickle.dump(self, out)
+        
+        # to dump the pickle file
+        # with open("test.pkl", "wb") as outfile:
+        #     pickle.dump(self, outfile)

@@ -95,6 +95,9 @@ def main():
      print(f"\t  Loading {name} dataset...")
 
      path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
+     if not os.path.exists(path_to_dataset):
+          print(f"\t  Dataset {path_to_dataset} does not exist. Building from scratch.")
+          
      with open(path_to_dataset, "rb") as f:
           dataset = pickle.load(f)
      print(f"\t  Loaded dataset: {path_to_dataset}")
