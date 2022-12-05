@@ -61,7 +61,7 @@ class QM9(data.MoleculeDataset):
         if verbose:
             indexes = tqdm(indexes, "Constructing molecules from SDF")
         for i in indexes:
-            if not (minitest and i >= 100):
+            if not (minitest and i in indexes[-100:]):
                 with utils.capture_rdkit_log() as log:
                     mol = molecules[i]
                 if mol is None:
