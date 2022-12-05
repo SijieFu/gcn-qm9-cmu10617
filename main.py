@@ -25,10 +25,10 @@ __forkedrepo__ = 'https://github.com/DeepGraphLearning/torchdrug'
 parser = argparse.ArgumentParser(description='Final team project repo for CMU 10-617 (Fall 2022)')
 
 # to test if our stuff works, a set with only 100 examples will be used
-parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
-
+parser.add_argument('--minitest', action='store_true', default=False, help='when testing the algorithm, use the mini dataset')
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file')
 parser.add_argument('--out_file', type=str, default="trained_models/my_model", help='path to saved model files')
+parser.add_argument('--load', action='store_true', default=False, help='load model')
 parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
 parser.add_argument('--hidden_dim', type=str, default="256", help='space separated string, list for GCN, [single] for MPNN')
 parser.add_argument('--num_layer', type=int, default=1, help='num layers for MPNN')
@@ -115,7 +115,9 @@ def main():
      task = tasks.PropertyPrediction(t_model, task=dataset.tasks)
      # optimizer
      optimizer = torch.optim.Adam(task.parameters(), lr=lr)
-     # solver (logger?)
+     # train model (logger?)
+     train = not args.load
+     print(f"\t  Training new model, saving results to: {args.out_file} .json and .pkl")
      solver = core.Engine(task,
                           train_set,
                           valid_set,
@@ -123,13 +125,18 @@ def main():
                           optimizer,
                           gpus = gpus,
                           batch_size = batch_size)
-     # train model
-     solver.train(num_epoch=epochs)
-     # save model
-     os.system("mkdir -p trained_models/")
-     with open(json_out, "w") as out_file:
-          json.dump(solver.config_dict(), out_file)
-     solver.save(pickle_out)
+     if train:
+          print(f"\t  Training new model, saving results to: {args.out_file} .json and .pkl")
+          # train model                                                                                                                                                                       
+          solver.train(num_epoch=epochs)
+          # save model                                                                                                                                                                       
+          os.system("mkdir -p trained_models/")
+          with open(json_out, "w") as out_file:
+               json.dump(solver.config_dict(), out_file)
+          solver.save(pickle_out)
+     else:
+          print(f"\t  Loading model from: {args.out_file}.pkl")
+          solver.load(pickle_out)
      # evaluate model ... MAE and RMSE for all properties
      train_metric = solver.evaluate("train")
      val_metric = solver.evaluate("valid")
