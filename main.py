@@ -87,11 +87,11 @@ def main():
            f"\t  Solver will be saved to {pickle_out}")
      # load dataset
      print(f"\t  Loading {name} dataset...")
-
-     path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
-     with open(path_to_dataset, "rb") as f:
+     if args.minitest:
+          args.dataset = args.dataset.replace(".pkl", "_mini.pkl")
+     with open(args.dataset, "rb") as f:
           dataset = pickle.load(f)
-     print(f"\t  Loaded dataset: {path_to_dataset}")
+     print(f"\t  Loaded dataset: {args.dataset}")
      # include distance in edge feature
      if args.include_distance:
           dataset.data = [edge_importance(mol) for mol in dataset.data]
