@@ -47,8 +47,10 @@ def main():
      global args
      # Parse arguments
      args = parser.parse_args()
+
      # dataset
      name = args.dataset.split(".")[0]
+
      # architecture
      hidden = args.hidden_dim.split()
      num_layer = args.num_layer
@@ -66,10 +68,12 @@ def main():
      else:
           print(f"Mismatch in models! -- set the '--model' flag")
           sys.exit()
+     
      # learning rate, batch size, epochs
      lr = float(args.lr)
      batch_size = int(args.batch_size)
      epochs = int(args.epochs)
+
      # GPU
      if args.gpu and torch.cuda.is_available():
           print("\t  Using GPU resource")
@@ -77,7 +81,8 @@ def main():
      else:
           print("\t  Using CPU only")
           gpus = None
-          # saving configureation
+     
+     # saving configureation
      if len(args.out_file.split("/")) > 1:
           dir_to_make = "/".join(args.out_file.split("/")[:-1])
           os.system(f"mkdir -p {dir_to_make}")
@@ -85,16 +90,18 @@ def main():
      pickle_out = args.out_file + ".pkl"
      print(f"\t  Model configuration will be saved to {json_out}\n"
            f"\t  Solver will be saved to {pickle_out}")
+     
      # load dataset
      print(f"\t  Loading {name} dataset...")
-
      path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
      with open(path_to_dataset, "rb") as f:
           dataset = pickle.load(f)
      print(f"\t  Loaded dataset: {path_to_dataset}")
+
      # include distance in edge feature
      if args.include_distance:
           dataset.data = [edge_importance(mol) for mol in dataset.data]
+     
      # model training
      lengths = [int(args.train_size * len(dataset)), int((1 - args.train_size)/2 * len(dataset))]
      lengths += [len(dataset) - sum(lengths)]
@@ -123,13 +130,16 @@ def main():
                           optimizer,
                           gpus = gpus,
                           batch_size = batch_size)
+
      # train model
      solver.train(num_epoch=epochs)
+
      # save model
      os.system("mkdir -p trained_models/")
      with open(json_out, "w") as out_file:
           json.dump(solver.config_dict(), out_file)
      solver.save(pickle_out)
+     
      # evaluate model ... MAE and RMSE for all properties
      train_metric = solver.evaluate("train")
      val_metric = solver.evaluate("valid")
