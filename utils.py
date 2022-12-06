@@ -3,7 +3,6 @@ import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
 
 # Load model performance from path
 def get_performance(metric_path):
@@ -29,17 +28,8 @@ def gather_metrics(model_path):
                     rmse_dict[key.split("[")[1][:-1]] = metric_dict[key]
             maes.append(mae_dict)
             rsmes.append(rmse_dict)
-
     mae_df = pd.DataFrame(maes)
-    mae_scaler = MinMaxScaler(feature_range=(0.1, 1.0))
-    columns = list(mae_df.columns[1:])
-    mae_df[columns] = pd.DataFrame(mae_scaler.fit_transform(mae_df[columns]), columns=columns)
-
-    rmse_scaler = MinMaxScaler(feature_range=(0.1, 1.0))
     rmse_df = pd.DataFrame(rsmes)
-    columns = list(rmse_df.columns[1:])
-    rmse_df[columns] = pd.DataFrame(rmse_scaler.fit_transform(mae_df[columns]), columns=columns)
-
     return mae_df, rmse_df
 
 # Make bar plot figure
@@ -65,15 +55,14 @@ def bar_plot(df, save_name="test.png", barwidth=0.2):
     model_names = list(df.iloc[:, 0])
     x_labels = list(df.columns[1:])
     rates = df.iloc[:, 1:].to_numpy().T
-    #colors = ["lightgreen", "lightred", "gray", "lightblue"]
     for i, n in enumerate(model_names):
         plt.bar(np.arange(len(x_labels))+i*barwidth, rates[:,i], width=barwidth, label=f'{n}')
     plt.xlabel(f"property")
     plt.ylabel(f"min-max scaled metric")
     plt.title(f"Comparison of different model architectures\nfor property prediction on the QM9 Dataset")
     plt.xticks(np.arange(len(x_labels))+(len(model_names)-1)/2*barwidth, x_labels)
-    plt.xlim([-0.1*len(model_names), len(x_labels)+0.02])
-    plt.ylim([np.min(rates)-0.1, 1.0+0.1*np.ptp(rates)])
+    plt.xlim([-0.25*len(model_names), len(x_labels)])
+    plt.ylim([0, 5*np.ptp(rates)])
     plt.legend(loc='center', bbox_to_anchor=(0.5, np.min(rates)-0.33))
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
