@@ -16,6 +16,7 @@ from torchdrug import data, datasets
 from torchdrug import core, models, tasks
 from torchdrug import utils
 from utils import *
+from sklearn.preprocessing import MinMaxScaler
 
 # Collaborators for this team project
 __author__ = 'Sijie Fu, Nicholas Hattrup, Robert MacKnight'
@@ -155,6 +156,17 @@ def main():
           lengths = [int(x*len(dataset)) for x in lengths]
           lengths[0] = len(dataset) - sum(lengths[1:])
      train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths, generator=torch.Generator().manual_seed(42))
+
+     scalers = {task: MinMaxScaler() for task in dataset.tasks}
+     for task, scaler in scalers.items():
+          scaler.fit(np.asarray(dataset.targets[task]).reshape(-1, 1)[train_set.indices])
+          scaled_targert = scaler.transform(np.asarray(dataset.targets[task]).reshape(-1, 1)).reshape(-1).tolist()
+          train_set.dataset.targets[task] = scaled_targert
+          valid_set.dataset.targets[task] = scaled_targert
+          test_set.dataset.targets[task] = scaled_targert
+     with open(f"{args.model_path + out_file}_scalers.pkl", 'wb') as f:
+          pickle.dump(scalers, f)
+     print(f"\t Every target is now scaled with MinMaxScaler(). All scalers are saved to {args.model_path + out_file}_scalers.pkl")
 
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,

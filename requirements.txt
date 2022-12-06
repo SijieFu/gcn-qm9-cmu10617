@@ -11,3 +11,4 @@ fair-esm
 scipy
 gdown
 wandb
+scikit-learn
