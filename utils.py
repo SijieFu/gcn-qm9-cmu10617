@@ -29,17 +29,8 @@ def gather_metrics(model_path):
                     rmse_dict[key.split("[")[1][:-1]] = metric_dict[key]
             maes.append(mae_dict)
             rsmes.append(rmse_dict)
-
     mae_df = pd.DataFrame(maes)
-    mae_scaler = MinMaxScaler(feature_range=(0.1, 1.0))
-    columns = list(mae_df.columns[1:])
-    mae_df[columns] = pd.DataFrame(mae_scaler.fit_transform(mae_df[columns]), columns=columns)
-
-    rmse_scaler = MinMaxScaler(feature_range=(0.1, 1.0))
     rmse_df = pd.DataFrame(rsmes)
-    columns = list(rmse_df.columns[1:])
-    rmse_df[columns] = pd.DataFrame(rmse_scaler.fit_transform(mae_df[columns]), columns=columns)
-
     return mae_df, rmse_df
 
 # Make bar plot figure
@@ -65,7 +56,6 @@ def bar_plot(df, save_name="test.png", barwidth=0.2):
     model_names = list(df.iloc[:, 0])
     x_labels = list(df.columns[1:])
     rates = df.iloc[:, 1:].to_numpy().T
-    #colors = ["lightgreen", "lightred", "gray", "lightblue"]
     for i, n in enumerate(model_names):
         plt.bar(np.arange(len(x_labels))+i*barwidth, rates[:,i], width=barwidth, label=f'{n}')
     plt.xlabel(f"property")
