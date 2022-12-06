@@ -111,7 +111,11 @@ class MoleculeDataset(torch_data.Dataset, core.Configurable):
                         if value == "":
                             value = math.nan
                         targets[field].append(value)
-
+        
+        if smiles_field is None:
+            self.targets = targets
+            self.transform = None
+            return
         self.load_smiles(smiles, targets, verbose=verbose, **kwargs)
 
     def load_pickle(self, pkl_file, verbose=0):
