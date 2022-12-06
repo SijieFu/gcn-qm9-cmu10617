@@ -1,13 +1,16 @@
-from sklearn.preprocessing import MinMaxScaler
-import matplotlib.pyplot as plt
-import json
 import os
+import json
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 # Load model performance from path
 def get_performance(metric_path):
     with open(metric_path, "r") as f:
         metric_dict = json.load(f)
     return metric_dict
+
 # Organize metrics into DataFrames
 def gather_metrics(model_path):
     path = model_path
@@ -38,6 +41,7 @@ def gather_metrics(model_path):
     rmse_df[columns] = pd.DataFrame(rmse_scaler.fit_transform(mae_df[columns]), columns=columns)
 
     return mae_df, rmse_df
+
 # Make bar plot figure
 def bar_plot(df, save_name="test.png", barwidth=0.2):
     # make figure and axes
@@ -73,5 +77,4 @@ def bar_plot(df, save_name="test.png", barwidth=0.2):
     plt.legend(loc='center', bbox_to_anchor=(0.5, np.min(rates)-0.33))
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
-    
 
