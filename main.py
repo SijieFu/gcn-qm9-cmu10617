@@ -15,7 +15,7 @@ import torch.optim as optim
 from torchdrug import data, datasets
 from torchdrug import core, models, tasks
 from torchdrug import utils
-from transforms import *
+from utils import *
 
 # Collaborators for this team project
 __author__ = 'Sijie Fu, Nicholas Hattrup, Robert MacKnight'
