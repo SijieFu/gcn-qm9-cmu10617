@@ -127,8 +127,10 @@ def main():
      if not os.path.exists('./dataset/' + path_to_dataset) or args.onthefly:
           print(f"\t  Dataset ./dataset/{path_to_dataset} does not exist. Building from scratch.")
           # feature selection for nodes and edges
+          atom_feature = "default"
+          bond_feature = ["default", "length"] if args.include_distance else "default"
           dataset = datasets.QM9(path='./dataset/', node_position=True, minitest=args.minitest,
-                              atom_feature="default", bond_feature="default", mol_feature=None,
+                              atom_feature=atom_feature, bond_feature=bond_feature, mol_feature=None,
                               with_hydrogen=False, kekulize=True)
           if not args.onthefly:
                with open('./dataset/' + path_to_dataset, "wb") as f:
@@ -138,10 +140,6 @@ def main():
           with open('./dataset/' + path_to_dataset, "rb") as f:
                dataset = pickle.load(f)
           print(f"\t  Loaded dataset: ./dataset/{path_to_dataset}")
-
-     # include distance in edge feature
-     if args.include_distance:
-          dataset.data = [edge_importance(mol) for mol in dataset.data]
      
      # model training
      if args.minitest:
