@@ -204,7 +204,7 @@ def main():
      with open(args.model_path + args.out_file + "_test_metric.json", "w") as ftest:
           json_test_metric = {k: v.item() for k, v in test_metric.items()}
           json.dump(json_test_metric, ftest)
-     print(f"\t  Saved metrics to {args.model + args.out_file}")
+     print(f"\t  Saved metrics to {args.model_path + args.out_file}")
      
 if __name__ == '__main__':
     main()
