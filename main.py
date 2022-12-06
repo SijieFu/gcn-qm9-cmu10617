@@ -28,6 +28,7 @@ parser = argparse.ArgumentParser(description='Final team project repo for CMU 10
 parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
 
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file in the subfolder ./dataset/')
+parser.add_argument('--onthefly', action='store_false', default=True,  help='whether to generate new dataset/.pkl file')
 parser.add_argument('--model_path', type=str, default="./models/", help='default path to save is ./models/')
 parser.add_argument('--out_file', type=str, default="", help='name for output file (default path to save is ./models/)')
 parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
@@ -101,11 +102,11 @@ def main():
      print(f"\t  Model configuration will be saved to {json_out}\n"
            f"\t  Solver will be saved to {pickle_out}")
      
-     # load dataset
+     # load dataset, for now, dataset will be generated on the fly by default
      print(f"\t  Loading {name} dataset...")
 
      path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
-     if not os.path.exists('./dataset/' + path_to_dataset):
+     if not os.path.exists('./dataset/' + path_to_dataset) or args.onthefly:
           print(f"\t  Dataset ./dataset/{path_to_dataset} does not exist. Building from scratch.")
           # feature selection for nodes and edges
           dataset = datasets.QM9(path='./dataset/', node_position=True, minitest=args.minitest,
