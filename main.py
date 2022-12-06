@@ -173,7 +173,11 @@ def main():
                           gpus = gpus,
                           batch_size = batch_size)
      
-     # train model
+     # train or load model
+     if args.load_model:
+          pickle_in = args.model + args.out_file + ".pkl"
+          solver.load(pickle_in)
+     else:
           solver.train(num_epoch=epochs)
      # save model
           with open(json_out, "w") as out_file:
