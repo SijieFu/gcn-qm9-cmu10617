@@ -1,6 +1,7 @@
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import json
+import os
 
 # Load model performance from path
 def get_performance(metric_path):
