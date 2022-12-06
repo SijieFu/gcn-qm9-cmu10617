@@ -30,8 +30,10 @@ parser.add_argument('--minitest', action='store_false', default=True, help='when
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file in the subfolder ./dataset/')
 parser.add_argument('--onthefly', action='store_false', default=True,  help='whether to generate new dataset/.pkl file')
 parser.add_argument('--model_path', type=str, default="./models/", help='default path to save is ./models/')
+parser.add_argument('--load_model', action="store_true", default=False, help='whether or not you would like to load a model')
 parser.add_argument('--out_file', type=str, default="", help='name for output file (default path to save is ./models/)')
 parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
+parser.add_argument('--load_params', type=str, default='None', help='to load hyperparameters and not have to set them')
 parser.add_argument('--hidden_dim', type=str, default="256", help='underscore separated string, list for GCN, [single] for MPNN')
 parser.add_argument('--num_layer', type=int, default=1, help='num layers for MPNN')
 parser.add_argument('--num_gru_layer', type=int, default=1, help='num gru layers for MPNN')
@@ -43,13 +45,31 @@ parser.add_argument('--epochs', type=int, default=50, help='number of epochs')
 parser.add_argument('--gpu', action='store_true', default=False, help='use GPU')
 parser.add_argument('--train_size', type=float, default=0.8, help='train size')
 parser.add_argument('--include_distance', action='store_true', default=False)
+parser.add_argument('--param_opt', type=str, default = None, help='config file for hyperparameter optimization')
 
 def main():
      
      global args
      # Parse arguments
      args = parser.parse_args()
-
+     # load model hyper parameters from config
+     if args.load_params != 'None':
+          params_dict = json.load(open(args.load_params, "r"))
+          try:
+               if args.model == 'MPNN':
+                    args.hidden_dim = str(params_dict["hidden_dim"])
+                    args.num_layer = params_dict["num_layer"]
+                    args.num_gru_layer = params_dict["num_gru_layer"]
+                    args.num_mlp_layer = params_dict["num_mlp_layer"]
+                    args.num_s2s_step = params_dict["num_s2s_step"]
+               elif args.model == "GCN":
+                    args.hidden_dim = "_".join([str(i) for i in params_dict["hidden_dims"]])
+               else:
+                    print(f"Mismatching config ({args.load_params}) and model ({args.model})")
+          except:
+               print(f"Error parsing ({args.load_params}) for model ({args.model})")
+          args.lr = params_dict["lr"]
+          args.batch_size = params_dict["batch_size"]
      # dataset
      name = args.dataset.split(".")[0]
 
@@ -59,7 +79,6 @@ def main():
      num_gru_layer = args.num_gru_layer
      num_mlp_layer = args.num_mlp_layer
      num_s2s_step = args.num_s2s_step
-
      if len(hidden) > 1:
           hidden_dims = [int(i) for i in hidden]
           model = "GCN"
@@ -88,7 +107,7 @@ def main():
      # saving configureation
      if not os.path.exists(args.model_path):
           os.mkdir(args.model_path)
-     out_file = model if args.out_file == "" else out_file
+     out_file = model if args.out_file == "" else args.out_file
      while True:
           if out_file+'.json' in os.listdir(args.model_path) or out_file+'.pkl' in os.listdir(args.model_path):
                print(f"\t  Model out_file naming {out_file} already exists. Using {out_file}_new instead.")
@@ -128,18 +147,19 @@ def main():
      lengths = [int(args.train_size * len(dataset)), int((1 - args.train_size)/2 * len(dataset))]
      lengths += [len(dataset) - sum(lengths)]
      train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths)
+     param_opt = False if args.param_opt == "None" else True
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
-                                hidden_dim = hidden_dim,
-                                edge_input_dim = dataset.edge_feature_dim,
-                                num_layer = num_layer,
-                                num_gru_layer = num_gru_layer,
-                                num_mlp_layer = num_mlp_layer,
-                                num_s2s_step = num_s2s_step)
+                              hidden_dim = hidden_dim,
+                              edge_input_dim = dataset.edge_feature_dim,
+                              num_layer = num_layer,
+                              num_gru_layer = num_gru_layer,
+                              num_mlp_layer = num_mlp_layer,
+                              num_s2s_step = num_s2s_step)
      elif model == "GCN":
           t_model = models.GCN(input_dim = dataset.node_feature_dim,
-                               hidden_dims = hidden_dims,
-                               edge_input_dim = dataset.edge_feature_dim)
+                              hidden_dims = hidden_dims,
+                              edge_input_dim = dataset.edge_feature_dim)
      # task
      task = tasks.PropertyPrediction(t_model, task=dataset.tasks)
      # optimizer
@@ -152,19 +172,30 @@ def main():
                           optimizer,
                           gpus = gpus,
                           batch_size = batch_size)
-     
+     if args.load_model:
+     # load model
+          json_in = args.model_path + args.out_file + ".json"
+          pickle_in = args.model_path + args.out_file + ".pkl"
+          print(f"\t  You have requested to load your old model.")
+          solver.load(pickle_in)
+     else:
      # train model
-     solver.train(num_epoch=epochs)
-     
+          solver.train(num_epoch=epochs)
      # save model
-     with open(json_out, "w") as out_file:
-          json.dump(solver.config_dict(), out_file)
-     solver.save(pickle_out)
-     
+          with open(json_out, "w") as out_file:
+               json.dump(solver.config_dict(), out_file)
+          solver.save(pickle_out)
      # evaluate model ... MAE and RMSE for all properties
      train_metric = solver.evaluate("train")
      val_metric = solver.evaluate("valid")
      test_metric = solver.evaluate("test")
+     print(f"\t  Saving metrics to {args.model + args.out_file}")
+     with open(args.model + args.out_file + "_train_metric.json", "w") as ft:
+          json.dump(train_metric, ft)
+     with open(args.model + args.out_file + "_val_metric.json", "w") as fval:
+          json.dump(val_metric, fval)
+     with open(args.model + args.out_file + "_test_metric.json", "w") as ftest:
+          json.dump(train_metric, ftest)
      
 if __name__ == '__main__':
     main()
