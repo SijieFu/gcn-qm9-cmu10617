@@ -199,11 +199,11 @@ def main():
      val_metric = solver.evaluate("valid")
      test_metric = solver.evaluate("test")
      print(f"\t  Saving metrics to {args.model + args.out_file}")
-     with open(args.model + args.out_file + "_train_metric.json", "w") as ft:
+     with open(args.model_path + args.out_file + "_train_metric.json", "w") as ft:
           json.dump(train_metric, ft)
-     with open(args.model + args.out_file + "_val_metric.json", "w") as fval:
+     with open(args.model_path + args.out_file + "_val_metric.json", "w") as fval:
           json.dump(val_metric, fval)
-     with open(args.model + args.out_file + "_test_metric.json", "w") as ftest:
+     with open(args.model_path + args.out_file + "_test_metric.json", "w") as ftest:
           json.dump(train_metric, ftest)
      
 if __name__ == '__main__':
