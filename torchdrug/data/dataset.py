@@ -96,7 +96,6 @@ class MoleculeDataset(torch_data.Dataset, core.Configurable):
             if verbose:
                 reader = iter(tqdm(reader, "Loading %s" % csv_file, utils.get_line_count(csv_file)))
             fields = next(reader)
-            print("fields:", fields)
             smiles = []
             targets = defaultdict(list)
             for values in reader:
