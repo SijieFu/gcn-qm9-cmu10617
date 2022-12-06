@@ -2,7 +2,7 @@
 import torch
 import numpy as np
 
-# add distance to edge of molecular graph                                                                                                                                                                  
+# add distance to edge of molecular graph                                                                                                                                                            
 def edge_importance(molecular_graph):
     test_mol = molecular_graph
     # add dummy dimesnion to edges to replace with distances                                                                                                                                               

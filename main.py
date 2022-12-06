@@ -28,9 +28,10 @@ parser = argparse.ArgumentParser(description='Final team project repo for CMU 10
 parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
 
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file in the subfolder ./dataset/')
-parser.add_argument('--out_file', type=str, default="trained_models/my_model", help='path to saved model files')
+parser.add_argument('--model_path', type=str, default="./models/", help='default path to save is ./models/')
+parser.add_argument('--out_file', type=str, default="", help='name for output file (default path to save is ./models/)')
 parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
-parser.add_argument('--hidden_dim', type=str, default="256", help='space separated string, list for GCN, [single] for MPNN')
+parser.add_argument('--hidden_dim', type=str, default="256", help='underscore separated string, list for GCN, [single] for MPNN')
 parser.add_argument('--num_layer', type=int, default=1, help='num layers for MPNN')
 parser.add_argument('--num_gru_layer', type=int, default=1, help='num gru layers for MPNN')
 parser.add_argument('--num_mlp_layer', type=int, default=1, help='num mlp layer for MPNN')
@@ -52,11 +53,12 @@ def main():
      name = args.dataset.split(".")[0]
 
      # architecture
-     hidden = args.hidden_dim.split()
+     hidden = args.hidden_dim.split('_')
      num_layer = args.num_layer
      num_gru_layer = args.num_gru_layer
      num_mlp_layer = args.num_mlp_layer
      num_s2s_step = args.num_s2s_step
+
      if len(hidden) > 1:
           hidden_dims = [int(i) for i in hidden]
           model = "GCN"
@@ -83,11 +85,19 @@ def main():
           gpus = None
      
      # saving configureation
-     if len(args.out_file.split("/")) > 1:
-          dir_to_make = "/".join(args.out_file.split("/")[:-1])
-          os.system(f"mkdir -p {dir_to_make}")
-     json_out = args.out_file + ".json"
-     pickle_out = args.out_file + ".pkl"
+     if not os.path.exists(args.model_path):
+          os.mkdir(args.model_path)
+     out_file = model if args.out_file == "" else out_file
+     while True:
+          if out_file+'.json' in os.listdir(args.model_path) or out_file+'.pkl' in os.listdir(args.model_path):
+               print(f"\t  Model out_file naming {out_file} already exists. Using {out_file}_new instead.")
+               out_file += "_new"
+          else:
+               print(f"\t  Using {out_file} as the new name for outfiles. They will be in {args.model_path}")
+               print(f"\t***** REMEMBER TO MANUALLY CHANGE THE OUTFILE NAMES TO AVOIND CONFUSION. *****")
+               break
+     json_out = args.model_path + out_file + ".json"
+     pickle_out = args.model_path + out_file + ".pkl"
      print(f"\t  Model configuration will be saved to {json_out}\n"
            f"\t  Solver will be saved to {pickle_out}")
      
@@ -106,7 +116,6 @@ def main():
                dataset = pickle.load(f)
           print(f"\t  Loaded dataset: ./dataset/{path_to_dataset}")
 
-     sys.exit()
      # include distance in edge feature
      if args.include_distance:
           dataset.data = [edge_importance(mol) for mol in dataset.data]
@@ -144,7 +153,6 @@ def main():
      solver.train(num_epoch=epochs)
      
      # save model
-     os.system("mkdir -p trained_models/")
      with open(json_out, "w") as out_file:
           json.dump(solver.config_dict(), out_file)
      solver.save(pickle_out)
