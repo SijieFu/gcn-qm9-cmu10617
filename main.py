@@ -158,7 +158,7 @@ def main():
           lengths = [int(x*len(dataset)) for x in lengths]
           lengths[0] = len(dataset) - sum(lengths[1:])
      train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths, generator=torch.Generator().manual_seed(42))
-     
+
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
                               hidden_dim = hidden_dim,
@@ -186,7 +186,7 @@ def main():
      
      # train or load model
      if args.load_model:
-          pickle_in = args.model + args.out_file + ".pkl"
+          pickle_in = args.model_path + args.out_file + ".pkl"
           solver.load(pickle_in)
      else:
           solver.train(num_epoch=epochs)
