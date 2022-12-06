@@ -41,9 +41,9 @@ parser.add_argument('--num_mlp_layer', type=int, default=1, help='num mlp layer 
 parser.add_argument('--num_s2s_step', type=int, default=1, help='num s2s step for MPNN')
 parser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')
-parser.add_argument('--epochs', type=int, default=50, help='number of epochs')
+parser.add_argument('--epochs', type=int, default=100, help='number of epochs')
 parser.add_argument('--gpu', action='store_true', default=False, help='use GPU')
-parser.add_argument('--train_size', type=float, default=0.8, help='train size')
+parser.add_argument('--test_size', type=float, default=10000, help='test size (same for validation, rest for training) [default: 10000]')
 parser.add_argument('--include_distance', action='store_true', default=False)
 parser.add_argument('--param_opt', type=str, default = None, help='config file for hyperparameter optimization')
 
@@ -113,7 +113,7 @@ def main():
                print(f"\t  Model out_file naming {out_file} already exists. Using {out_file}_new instead.")
                out_file += "_new"
           else:
-               print(f"\t  Using {out_file} as the new name for outfiles. They will be in {args.model_path}")
+               print(f"\t  Using {out_file} as the (new) name for outfiles. They will be in {args.model_path}")
                print(f"\t***** REMEMBER TO MANUALLY CHANGE THE OUTFILE NAMES TO AVOIND CONFUSION. *****")
                break
      json_out = args.model_path + out_file + ".json"
@@ -131,9 +131,10 @@ def main():
           dataset = datasets.QM9(path='./dataset/', node_position=True, minitest=args.minitest,
                               atom_feature="default", bond_feature="default", mol_feature=None,
                               with_hydrogen=False, kekulize=True)
-          with open('./dataset/' + path_to_dataset, "wb") as f:
-               pickle.dump(dataset, f)
-          print(f"\t  Done building: ./dataset/{path_to_dataset}")
+          if not args.onthefly:
+               with open('./dataset/' + path_to_dataset, "wb") as f:
+                    pickle.dump(dataset, f)
+               print(f"\t  Done building: ./dataset/{path_to_dataset}")
      else:
           with open('./dataset/' + path_to_dataset, "rb") as f:
                dataset = pickle.load(f)
@@ -147,7 +148,6 @@ def main():
      lengths = [int(args.train_size * len(dataset)), int((1 - args.train_size)/2 * len(dataset))]
      lengths += [len(dataset) - sum(lengths)]
      train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths)
-     param_opt = False if args.param_opt == "None" else True
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
                               hidden_dim = hidden_dim,
@@ -172,13 +172,7 @@ def main():
                           optimizer,
                           gpus = gpus,
                           batch_size = batch_size)
-     if args.load_model:
-     # load model
-          json_in = args.model_path + args.out_file + ".json"
-          pickle_in = args.model_path + args.out_file + ".pkl"
-          print(f"\t  You have requested to load your old model.")
-          solver.load(pickle_in)
-     else:
+     
      # train model
           solver.train(num_epoch=epochs)
      # save model
