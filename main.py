@@ -39,7 +39,7 @@ parser.add_argument('--num_mlp_layer', type=int, default=1, help='num mlp layer 
 parser.add_argument('--num_s2s_step', type=int, default=1, help='num s2s step for MPNN')
 parser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')
-parser.add_argument('--epochs', type=int, default=50, help='number of epochs')
+parser.add_argument('--epochs', type=int, default=100, help='number of epochs')
 parser.add_argument('--gpu', action='store_true', default=False, help='use GPU')
 parser.add_argument('--train_size', type=float, default=0.8, help='train size')
 parser.add_argument('--include_distance', action='store_true', default=False)

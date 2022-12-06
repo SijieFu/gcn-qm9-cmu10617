@@ -1,0 +1,266 @@
+---Training MPNN model---
+	  Using CPU only
+	  Using MPNN as the new name for outfiles. They will be in ./models/
+	***** REMEMBER TO MANUALLY CHANGE THE OUTFILE NAMES TO AVOIND CONFUSION. *****
+	  Model configuration will be saved to ./models/MPNN.json
+	  Solver will be saved to ./models/MPNN.pkl
+	  Loading QM9 dataset...
+	  Dataset ./dataset/QM9_mini.pkl does not exist. Building from scratch.
+09:26:28   Extracting gdb9.sdf from ./dataset/gdb9.tar.gz to ./dataset/gdb9.sdf
+	  Done building: ./dataset/QM9_mini.pkl
+09:26:35   Preprocess training set
+09:26:35   {'batch_size': 64,
+ 'class': 'core.Engine',
+ 'gpus': None,
+ 'gradient_interval': 1,
+ 'log_interval': 100,
+ 'logger': 'logging',
+ 'num_worker': 0,
+ 'optimizer': {'amsgrad': False,
+               'betas': (0.9, 0.999),
+               'capturable': False,
+               'class': 'optim.Adam',
+               'eps': 1e-08,
+               'foreach': None,
+               'lr': 0.001,
+               'maximize': False,
+               'weight_decay': 0},
+ 'scheduler': None,
+ 'sweep_configuration': None,
+ 'task': {'class': 'tasks.PropertyPrediction',
+          'criterion': 'mse',
+          'graph_construction_model': None,
+          'metric': ('mae', 'rmse'),
+          'model': {'activation': 'relu',
+                    'batch_norm': False,
+                    'class': 'models.MPNN',
+                    'concat_hidden': False,
+                    'edge_input_dim': 13,
+                    'hidden_dim': 256,
+                    'input_dim': 29,
+                    'num_gru_layer': 1,
+                    'num_layer': 1,
+                    'num_mlp_layer': 1,
+                    'num_s2s_step': 1,
+                    'short_cut': False},
+          'normalization': True,
+          'num_class': None,
+          'num_mlp_layer': 1,
+          'task': ['mu',
+                   'alpha',
+                   'homo',
+                   'lumo',
+                   'gap',
+                   'r2',
+                   'zpve',
+                   'u0',
+                   'u298',
+                   'h298',
+                   'g298',
+                   'cv'],
+          'verbose': 0},
+ 'test_set': {'class': 'dataset.Subset',
+              'dataset': {'atom_feature': 'default',
+                          'bond_feature': 'default',
+                          'class': 'datasets.QM9',
+                          'kekulize': True,
+                          'minitest': True,
+                          'mol_feature': None,
+                          'node_position': True,
+                          'path': './dataset/',
+                          'verbose': 1,
+                          'with_hydrogen': False},
+              'indices': [38, 15, 24, 36, 54, 86, 84, 64, 25, 11, 65]},
+ 'train_set': {'class': 'dataset.Subset',
+               'dataset': {'atom_feature': 'default',
+                           'bond_feature': 'default',
+                           'class': 'datasets.QM9',
+                           'kekulize': True,
+                           'minitest': True,
+                           'mol_feature': None,
+                           'node_position': True,
+                           'path': './dataset/',
+                           'verbose': 1,
+                           'with_hydrogen': False},
+               'indices': [45,
+                           55,
+                           16,
+                           43,
+                           2,
+                           28,
+                           49,
+                           9,
+                           94,
+                           72,
+                           52,
+                           17,
+                           88,
+                           27,
+                           39,
+                           46,
+                           92,
+                           95,
+                           78,
+                           56,
+                           47,
+                           31,
+                           21,
+                           32,
+                           14,
+                           70,
+                           41,
+                           81,
+                           85,
+                           30,
+                           58,
+                           5,
+                           1,
+                           0,
+                           50,
+                           51,
+                           35,
+                           18,
+                           29,
+                           93,
+                           20,
+                           79,
+                           71,
+                           10,
+                           7,
+                           69,
+                           74,
+                           91,
+                           63,
+                           6,
+                           87,
+                           77,
+                           67,
+                           4,
+                           19,
+                           83,
+                           26,
+                           44,
+                           82,
+                           76,
+                           75,
+                           68,
+                           61,
+                           13,
+                           80,
+                           90,
+                           60,
+                           34,
+                           22,
+                           23,
+                           48,
+                           42,
+                           37,
+                           8,
+                           3,
+                           59,
+                           89]},
+ 'valid_set': {'class': 'dataset.Subset',
+               'dataset': {'atom_feature': 'default',
+                           'bond_feature': 'default',
+                           'class': 'datasets.QM9',
+                           'kekulize': True,
+                           'minitest': True,
+                           'mol_feature': None,
+                           'node_position': True,
+                           'path': './dataset/',
+                           'verbose': 1,
+                           'with_hydrogen': False},
+               'indices': [57, 33, 40, 73, 53, 12, 66, 96, 62]}}
+09:26:35   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+09:26:35   Epoch 0 begin
+09:26:35   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+09:26:35   mean squared error: 1.09774
+09:26:35   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+09:26:35   Epoch 0 end
+09:26:35   duration: 0.82 secs
+09:26:35   speed: 2.45 batch / sec
+09:26:35   ETA: 0.00 secs
+09:26:35   ------------------------------
+09:26:35   average mean squared error: 0.869417
+09:26:35   Save checkpoint to ./models/MPNN.pkl
+09:26:35   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+09:26:35   Evaluate on train
+09:26:36   ------------------------------
+09:26:36   average mean absolute error [alpha]: 7.42257
+09:26:36   average mean absolute error [cv]: 2.60415
+09:26:36   average mean absolute error [g298]: 59.4739
+09:26:36   average mean absolute error [gap]: 0.0816085
+09:26:36   average mean absolute error [h298]: 58.8449
+09:26:36   average mean absolute error [homo]: 0.0271887
+09:26:36   average mean absolute error [lumo]: 0.0602955
+09:26:36   average mean absolute error [mu]: 0.677718
+09:26:36   average mean absolute error [r2]: 197.474
+09:26:36   average mean absolute error [u0]: 54.3716
+09:26:36   average mean absolute error [u298]: 57.6585
+09:26:36   average mean absolute error [zpve]: 0.0159872
+09:26:36   average root mean squared error [alpha]: 9.35496
+09:26:36   average root mean squared error [cv]: 3.09318
+09:26:36   average root mean squared error [g298]: 78.731
+09:26:36   average root mean squared error [gap]: 0.0904994
+09:26:36   average root mean squared error [h298]: 82.0645
+09:26:36   average root mean squared error [homo]: 0.0357141
+09:26:36   average root mean squared error [lumo]: 0.0653486
+09:26:36   average root mean squared error [mu]: 0.824896
+09:26:36   average root mean squared error [r2]: 319.527
+09:26:36   average root mean squared error [u0]: 73.5801
+09:26:36   average root mean squared error [u298]: 73.8107
+09:26:36   average root mean squared error [zpve]: 0.0196605
+09:26:36   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+09:26:36   Evaluate on valid
+09:26:36   ------------------------------
+09:26:36   mean absolute error [alpha]: 5.87892
+09:26:36   mean absolute error [cv]: 2.33765
+09:26:36   mean absolute error [g298]: 37.9067
+09:26:36   mean absolute error [gap]: 0.084631
+09:26:36   mean absolute error [h298]: 35.0611
+09:26:36   mean absolute error [homo]: 0.0146078
+09:26:36   mean absolute error [lumo]: 0.0670818
+09:26:36   mean absolute error [mu]: 1.2578
+09:26:36   mean absolute error [r2]: 104.977
+09:26:36   mean absolute error [u0]: 32.486
+09:26:36   mean absolute error [u298]: 37.147
+09:26:36   mean absolute error [zpve]: 0.0143474
+09:26:36   root mean squared error [alpha]: 6.56435
+09:26:36   root mean squared error [cv]: 2.92687
+09:26:36   root mean squared error [g298]: 51.9852
+09:26:36   root mean squared error [gap]: 0.0886265
+09:26:36   root mean squared error [h298]: 51.8637
+09:26:36   root mean squared error [homo]: 0.0241189
+09:26:36   root mean squared error [lumo]: 0.0710554
+09:26:36   root mean squared error [mu]: 1.45731
+09:26:36   root mean squared error [r2]: 189.206
+09:26:36   root mean squared error [u0]: 47.0311
+09:26:36   root mean squared error [u298]: 49.0667
+09:26:36   root mean squared error [zpve]: 0.0192513
+09:26:36   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+09:26:36   Evaluate on test
+09:26:36   ------------------------------
+09:26:36   mean absolute error [alpha]: 6.12125
+09:26:36   mean absolute error [cv]: 2.77254
+09:26:36   mean absolute error [g298]: 63.3466
+09:26:36   mean absolute error [gap]: 0.07842
+09:26:36   mean absolute error [h298]: 64.7094
+09:26:36   mean absolute error [homo]: 0.0268917
+09:26:36   mean absolute error [lumo]: 0.050968
+09:26:36   mean absolute error [mu]: 0.680015
+09:26:36   mean absolute error [r2]: 290.671
+09:26:36   mean absolute error [u0]: 57.3221
+09:26:36   mean absolute error [u298]: 59.7394
+09:26:36   mean absolute error [zpve]: 0.00910748
+09:26:36   root mean squared error [alpha]: 7.06749
+09:26:36   root mean squared error [cv]: 3.38048
+09:26:36   root mean squared error [g298]: 79.8
+09:26:36   root mean squared error [gap]: 0.0816337
+09:26:36   root mean squared error [h298]: 83.8034
+09:26:36   root mean squared error [homo]: 0.0297398
+09:26:36   root mean squared error [lumo]: 0.054149
+09:26:36   root mean squared error [mu]: 0.84105
+09:26:36   root mean squared error [r2]: 474.538
+09:26:36   root mean squared error [u0]: 74.2275
+09:26:36   root mean squared error [u298]: 73.1373
+09:26:36   root mean squared error [zpve]: 0.0125028
