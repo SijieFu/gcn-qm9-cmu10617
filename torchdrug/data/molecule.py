@@ -213,7 +213,7 @@ class Molecule(Graph):
             type = str(bond.GetBondType())
             stereo = bond.GetStereo()
             if stereo:
-                _atoms = [a for a in bond.GetStereoAtoms()]
+                _atoms = [a for a in bond.GetStereoAtoms()] # IS THIS CORRECT?
             else:
                 _atoms = [0, 0]
             if type not in cls.bond2id:

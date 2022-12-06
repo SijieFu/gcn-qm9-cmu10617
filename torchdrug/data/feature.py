@@ -17,11 +17,26 @@ total_valence_vocab = range(8)
 num_radical_vocab = range(8)
 hybridization_vocab = range(len(Chem.rdchem.HybridizationType.values))
 
+# for the QM9 dataset, there are at most 9 heavy atoms (C, N, O, F)
+atom_vocab = ["C", "N", "O", "F"]
+atom_vocab = {a: i for i, a in enumerate(atom_vocab)}
+degree_vocab = range(1, 5)
+num_hs_vocab = range(0, 5)
+formal_charge_vocab = range(-1, 2)
+chiral_tag_vocab = range(3)
+total_valence_vocab = range(1, 5)
+num_radical_vocab = range(0, 3)
+hybridization_vocab = range(2, 5)
+
 bond_type_vocab = [Chem.rdchem.BondType.SINGLE, Chem.rdchem.BondType.DOUBLE,
                    Chem.rdchem.BondType.TRIPLE, Chem.rdchem.BondType.AROMATIC]
 bond_type_vocab = {b: i for i, b in enumerate(bond_type_vocab)}
 bond_dir_vocab = range(len(Chem.rdchem.BondDir.values))
 bond_stereo_vocab = range(len(Chem.rdchem.BondStereo.values))
+
+# for the QM9 dataset, there are at most 9 heavy atoms (C, N, O, F)
+bond_dir_vocab = [0, 3, 4, 5]
+bond_stereo_vocab = range(0, 4)
 
 # orderd by molecular mass
 residue_vocab = ["GLY", "ALA", "SER", "PRO", "VAL", "THR", "CYS", "ILE", "LEU", "ASN",
@@ -75,11 +90,11 @@ def atom_default(atom):
     """
     return onehot(atom.GetSymbol(), atom_vocab, allow_unknown=True) + \
            onehot(atom.GetChiralTag(), chiral_tag_vocab) + \
-           onehot(atom.GetTotalDegree(), degree_vocab, allow_unknown=True) + \
+           onehot(atom.GetTotalDegree(), degree_vocab) + \
            onehot(atom.GetFormalCharge(), formal_charge_vocab) + \
            onehot(atom.GetTotalNumHs(), num_hs_vocab) + \
            onehot(atom.GetNumRadicalElectrons(), num_radical_vocab) + \
-           onehot(atom.GetHybridization(), hybridization_vocab) + \
+           onehot(atom.GetHybridization(), hybridization_vocab, allow_unknown=True) + \
            [atom.GetIsAromatic(), atom.IsInRing()]
 
 
