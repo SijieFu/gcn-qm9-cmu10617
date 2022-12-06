@@ -183,28 +183,32 @@ def main():
      
      # train or load model
      if args.load_model:
-          pickle_in = args.model_path + args.out_file + ".pkl"
+          pickle_in = args.model_path + out_file + ".pkl"
           solver.load(pickle_in)
+          print(f"\t Loaded model: {pickle_in}")
      else:
           solver.train(num_epoch=epochs)
-     # save model
-          with open(json_out, "w") as out_file:
-               json.dump(solver.config_dict(), out_file)
+          # save model
+          with open(json_out, "w") as out_model:
+               json.dump(solver.config_dict(), out_model)
           solver.save(pickle_out)
+     
      # evaluate model ... MAE and RMSE for all properties
-     train_metric = solver.evaluate("train", log=False)
-     with open(args.model_path + args.out_file + "_train_metric.json", "w") as ft:
+     train_metric = solver.evaluate("train", log=True)
+     with open(args.model_path + out_file + "_train_metric.json", "w") as ft:
           json_train_metric = {k: v.item() for k, v in train_metric.items()}
           json.dump(json_train_metric, ft)
-     val_metric = solver.evaluate("valid", log=False)
-     with open(args.model_path + args.out_file + "_val_metric.json", "w") as fval:
+     
+     val_metric = solver.evaluate("valid", log=True)
+     with open(args.model_path + out_file + "_val_metric.json", "w") as fval:
           json_val_metric = {k: v.item() for k, v in val_metric.items()}
           json.dump(json_val_metric, fval)
-     test_metric = solver.evaluate("test", log=False)
-     with open(args.model_path + args.out_file + "_test_metric.json", "w") as ftest:
+     
+     test_metric = solver.evaluate("test", log=True)
+     with open(args.model_path + out_file + "_test_metric.json", "w") as ftest:
           json_test_metric = {k: v.item() for k, v in test_metric.items()}
           json.dump(json_test_metric, ftest)
-     print(f"\t  Saved metrics to {args.model_path + args.out_file}")
+     print(f"\t  Saved metrics to {args.model_path + out_file}_*_metric.json")
      
 if __name__ == '__main__':
     main()
