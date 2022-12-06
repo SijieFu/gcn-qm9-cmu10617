@@ -26,14 +26,14 @@ __forkedrepo__ = 'https://github.com/DeepGraphLearning/torchdrug'
 parser = argparse.ArgumentParser(description='Final team project repo for CMU 10-617 (Fall 2022)')
 
 # to test if our stuff works, a set with only 100 examples will be used
-parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
+parser.add_argument('--minitest', action='store_true', default=False, help='when testing the algorithm, use the mini dataset')
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file in the subfolder ./dataset/')
 parser.add_argument('--onthefly', action='store_false', default=True,  help='whether to generate new dataset/.pkl file')
 parser.add_argument('--model_path', type=str, default="./models/", help='default path to save is ./models/')
 parser.add_argument('--load_model', action="store_true", default=False, help='whether or not you would like to load a model')
 parser.add_argument('--out_file', type=str, default="", help='name for output file (default path to save is ./models/)')
 parser.add_argument('--model', type=str, default='GCN', help='model to train GCN or MPNN (default is GCN)')
-parser.add_argument('--load_params', type=str, default='None', help='to load hyperparameters and not have to set them')
+parser.add_argument('--load_params', type=str, default="", help='to load hyperparameters and not have to set them')
 parser.add_argument('--hidden_dim', type=str, default="256", help='underscore separated string, list for GCN, [single] for MPNN')
 parser.add_argument('--num_layer', type=int, default=1, help='num layers for MPNN')
 parser.add_argument('--num_gru_layer', type=int, default=1, help='num gru layers for MPNN')
@@ -53,7 +53,7 @@ def main():
      # Parse arguments
      args = parser.parse_args()
      # load model hyper parameters from config
-     if args.load_params != 'None':
+     if args.load_params != "":
           params_dict = json.load(open(args.load_params, "r"))
           try:
                if args.model == 'MPNN':
@@ -105,19 +105,26 @@ def main():
           gpus = None
      
      # saving configureation
-     if not os.path.exists(args.model_path):
-          os.mkdir(args.model_path)
+     model_path = args.model_path
+     if not os.path.exists(model_path):
+          os.mkdir(model_path)
      out_file = model if args.out_file == "" else args.out_file
      while True:
-          if out_file+'.json' in os.listdir(args.model_path) or out_file+'.pkl' in os.listdir(args.model_path):
+          if out_file in os.listdir(model_path):
                print(f"\t  Model out_file naming {out_file} already exists. Using {out_file}_new instead.")
                out_file += "_new"
           else:
-               print(f"\t  Using {out_file} as the (new) name for outfiles. They will be in {args.model_path}")
+               print(f"\t  Using {out_file} as the (new) name for outfiles. They will be in {model_path}")
                print(f"\t***** REMEMBER TO MANUALLY CHANGE THE OUTFILE NAMES TO AVOIND CONFUSION. *****")
                break
-     json_out = args.model_path + out_file + ".json"
-     pickle_out = args.model_path + out_file + ".pkl"
+     model_path += out_file + "/"
+     if not os.path.exists(model_path):
+          os.mkdir(model_path)
+     json_out = model_path + out_file + ".json"
+     pickle_out = model_path + out_file + ".pkl"
+     if args.load_params != "":
+          os.system(f"cp {args.load_params} {model_path + out_file}_config.json")
+     
      print(f"\t  Model configuration will be saved to {json_out}\n"
            f"\t  Solver will be saved to {pickle_out}")
      
@@ -164,9 +171,9 @@ def main():
           train_set.dataset.targets[task] = scaled_targert
           valid_set.dataset.targets[task] = scaled_targert
           test_set.dataset.targets[task] = scaled_targert
-     with open(f"{args.model_path + out_file}_scalers.pkl", 'wb') as f:
+     with open(f"{model_path + out_file}_scalers.pkl", 'wb') as f:
           pickle.dump(scalers, f)
-     print(f"\t Every target is now scaled with MinMaxScaler(). All scalers are saved to {args.model_path + out_file}_scalers.pkl")
+     print(f"\t Every target is now scaled with MinMaxScaler(). All scalers are saved to {model_path + out_file}_scalers.pkl")
 
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
@@ -195,11 +202,24 @@ def main():
      
      # train or load model
      if args.load_model:
-          pickle_in = args.model_path + out_file + ".pkl"
+          pickle_in = model_path + out_file + ".pkl"
           solver.load(pickle_in)
           print(f"\t Loaded model: {pickle_in}")
      else:
-          solver.train(num_epoch=epochs)
+          train_all_maes, val_all_maes = solver.train(num_epoch=epochs) # MAEs across all tasks
+          train_ave_maes = np.mean(train_all_maes, axis=1)
+          val_ave_maes = np.mean(val_all_maes, axis=1)
+          print(f"\t Minimum averaged MAE {min(train_ave_maes):.6f} on the validation set "
+                    f"found at epoch $$$ {np.argmin(train_ave_maes)} $$$ in all {epochs} epochs.")
+          print(f"\t Minimum averaged MAE {min(val_ave_maes):.6f} on the validation set "
+                    f"found at epoch $$$ {np.argmin(val_ave_maes)} $$$ in all {epochs} epochs.")
+          with open(model_path + out_file + "_train_maes.json", "w") as ft:
+               train_mmaes = {k: list(v) for k, v in enumerate(train_all_maes)}
+               json.dump(train_mmaes, ft)
+          with open(model_path + out_file + "_val_maes.json", "w") as ft:
+               val_mmaes = {k: list(v) for k, v in enumerate(val_all_maes)}
+               json.dump(val_mmaes, ft)
+          
           # save model
           with open(json_out, "w") as out_model:
                json.dump(solver.config_dict(), out_model)
@@ -207,20 +227,20 @@ def main():
      
      # evaluate model ... MAE and RMSE for all properties
      train_metric = solver.evaluate("train", log=True)
-     with open(args.model_path + out_file + "_train_metric.json", "w") as ft:
+     with open(model_path + out_file + "_train_metric.json", "w") as ft:
           json_train_metric = {k: v.item() for k, v in train_metric.items()}
           json.dump(json_train_metric, ft)
      
      val_metric = solver.evaluate("valid", log=True)
-     with open(args.model_path + out_file + "_val_metric.json", "w") as fval:
+     with open(model_path + out_file + "_val_metric.json", "w") as fval:
           json_val_metric = {k: v.item() for k, v in val_metric.items()}
           json.dump(json_val_metric, fval)
      
      test_metric = solver.evaluate("test", log=True)
-     with open(args.model_path + out_file + "_test_metric.json", "w") as ftest:
+     with open(model_path + out_file + "_test_metric.json", "w") as ftest:
           json_test_metric = {k: v.item() for k, v in test_metric.items()}
           json.dump(json_test_metric, ftest)
-     print(f"\t  Saved metrics to {args.model_path + out_file}_*_metric.json")
+     print(f"\t  Saved metrics to {model_path + out_file}_*_metric.json")
      
 if __name__ == '__main__':
     main()

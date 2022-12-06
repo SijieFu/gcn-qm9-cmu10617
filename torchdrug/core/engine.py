@@ -12,6 +12,7 @@ from torchdrug import data, core, utils
 from torchdrug.core import Registry as R
 from torchdrug.utils import comm, pretty
 import wandb
+import numpy as np
 
 module = sys.modules[__name__]
 logger = logging.getLogger(__name__)
@@ -144,6 +145,7 @@ class Engine(core.Configurable):
                 model = nn.parallel.DistributedDataParallel(model, find_unused_parameters=True)
         model.train()
 
+        train_all_maes, val_all_maes = [], []
         for epoch in self.meter(num_epoch):
             sampler.set_epoch(epoch)
 
@@ -174,8 +176,22 @@ class Engine(core.Configurable):
                     metrics = []
                     start_id = batch_id + 1
                     gradient_interval = min(batch_per_epoch - start_id, self.gradient_interval)
+
+            train_metric = self.evaluate('train', log=True)
+            train_mae = [float(train_metric[key]) for key in train_metric.keys() if "mean absolute error" in key]
+            val_metric = self.evaluate('valid', log=True)
+            val_mae = [float(val_metric[key]) for key in val_metric.keys() if "mean absolute error" in key]
+
+            print(f"\t Mean MAE error on the trian set across all tasks: {np.mean(train_mae):.6f}")
+            print(f"\t Mean MAE error on the validation set across all tasks: {np.mean(val_mae):.6f}")
+
+            train_all_maes.append(train_mae)
+            val_all_maes.append(val_mae)
+            
             if self.scheduler:
                 self.scheduler.step()
+            
+        return np.asarray(train_all_maes), np.asarray(val_all_maes)
 
     @torch.no_grad()
     def evaluate(self, split, log=True):
