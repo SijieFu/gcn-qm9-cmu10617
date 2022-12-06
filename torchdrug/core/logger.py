@@ -70,6 +70,7 @@ class LoggingLogger(LoggerBase):
                 self.logger.warning("%s: %g" % (k, record[k]))
 
     def log_config(self, config):
+        return
         self.logger.warning(pprint.pformat(config))
 
 

@@ -94,7 +94,7 @@ def main():
                print(f"\t  Model out_file naming {out_file} already exists. Using {out_file}_new instead.")
                out_file += "_new"
           else:
-               print(f"\t  Using {out_file} as the new name for outfiles. They will be in {args.model_path}")
+               print(f"\t  Using {out_file} as the (new) name for outfiles. They will be in {args.model_path}")
                print(f"\t***** REMEMBER TO MANUALLY CHANGE THE OUTFILE NAMES TO AVOIND CONFUSION. *****")
                break
      json_out = args.model_path + out_file + ".json"
@@ -150,8 +150,8 @@ def main():
                           valid_set,
                           test_set,
                           optimizer,
-                          gpus = gpus,
-                          batch_size = batch_size)
+                          gpus=gpus,
+                          batch_size=batch_size)
      
      # train model
      solver.train(num_epoch=epochs)
