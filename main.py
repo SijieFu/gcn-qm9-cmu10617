@@ -26,7 +26,6 @@ parser = argparse.ArgumentParser(description='Final team project repo for CMU 10
 
 # to test if our stuff works, a set with only 100 examples will be used
 parser.add_argument('--minitest', action='store_false', default=True, help='when testing the algorithm, use the mini dataset')
-
 parser.add_argument('--dataset', type=str, default='QM9.pkl', help='path to dataset file in the subfolder ./dataset/')
 parser.add_argument('--onthefly', action='store_false', default=True,  help='whether to generate new dataset/.pkl file')
 parser.add_argument('--model_path', type=str, default="./models/", help='default path to save is ./models/')
@@ -195,16 +194,19 @@ def main():
                json.dump(solver.config_dict(), out_file)
           solver.save(pickle_out)
      # evaluate model ... MAE and RMSE for all properties
-     train_metric = solver.evaluate("train")
-     val_metric = solver.evaluate("valid")
-     test_metric = solver.evaluate("test")
-     print(f"\t  Saving metrics to {args.model + args.out_file}")
+     train_metric = solver.evaluate("train", log=False)
      with open(args.model_path + args.out_file + "_train_metric.json", "w") as ft:
-          json.dump(train_metric, ft)
+          json_train_metric = {k: v.item() for k, v in train_metric.items()}
+          json.dump(json_train_metric, ft)
+     val_metric = solver.evaluate("valid", log=False)
      with open(args.model_path + args.out_file + "_val_metric.json", "w") as fval:
-          json.dump(val_metric, fval)
+          json_val_metric = {k: v.item() for k, v in val_metric.items()}
+          json.dump(json_val_metric, fval)
+     test_metric = solver.evaluate("test", log=False)
      with open(args.model_path + args.out_file + "_test_metric.json", "w") as ftest:
-          json.dump(train_metric, ftest)
+          json_test_metric = {k: v.item() for k, v in test_metric.items()}
+          json.dump(json_test_metric, ftest)
+     print(f"\t  Saved metrics to {args.model + args.out_file}")
      
 if __name__ == '__main__':
     main()
