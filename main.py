@@ -31,7 +31,7 @@ parser.add_argument('--onthefly', action='store_false', default=True,  help='whe
 parser.add_argument('--model_path', type=str, default="./models/", help='default path to save is ./models/')
 parser.add_argument('--load_model', action="store_true", default=False, help='whether or not you would like to load a model')
 parser.add_argument('--out_file', type=str, default="", help='name for output file (default path to save is ./models/)')
-parser.add_argument('--model', type=str, default='MPNN', help='model to train GCN or MPNN')
+parser.add_argument('--model', type=str, default='GCN', help='model to train GCN or MPNN (default is GCN)')
 parser.add_argument('--load_params', type=str, default='None', help='to load hyperparameters and not have to set them')
 parser.add_argument('--hidden_dim', type=str, default="256", help='underscore separated string, list for GCN, [single] for MPNN')
 parser.add_argument('--num_layer', type=int, default=1, help='num layers for MPNN')
