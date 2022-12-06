@@ -145,9 +145,20 @@ def main():
           dataset.data = [edge_importance(mol) for mol in dataset.data]
      
      # model training
-     lengths = [int(args.train_size * len(dataset)), int((1 - args.train_size)/2 * len(dataset))]
-     lengths += [len(dataset) - sum(lengths)]
-     train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths)
+     if args.minitest:
+          lengths = [0.8, 0.1, 0.1]
+     elif args.test_size < 0.5:
+          lengths = [1.0 - 2 * args.test_size, args.test_size, args.test_size]
+     elif args.test_size > 1000:
+          lengths = [len(dataset) - 2 * int(args.test_size), int(args.test_size), int(args.test_size)]
+     else:
+          lengths = [0.8, 0.1, 0.1] if len(dataset) < 20000 else [len(dataset) - 20000, 10000, 10000]
+          print(f"\t test_size argument (--test_size {args.test_size}) is illegal. Using default 10k or 0.1 for test.")
+     if sum(lengths) == 1.0:
+          lengths = [int(x*len(dataset)) for x in lengths]
+          lengths[0] = len(dataset) - sum(lengths[1:])
+     train_set, valid_set, test_set = torch.utils.data.random_split(dataset, lengths, generator=torch.Generator().manual_seed(42))
+     
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
                               hidden_dim = hidden_dim,
