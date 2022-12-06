@@ -3,7 +3,6 @@ import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
 
 # Load model performance from path
 def get_performance(metric_path):
@@ -62,8 +61,8 @@ def bar_plot(df, save_name="test.png", barwidth=0.2):
     plt.ylabel(f"min-max scaled metric")
     plt.title(f"Comparison of different model architectures\nfor property prediction on the QM9 Dataset")
     plt.xticks(np.arange(len(x_labels))+(len(model_names)-1)/2*barwidth, x_labels)
-    plt.xlim([-0.1*len(model_names), len(x_labels)+0.02])
-    plt.ylim([np.min(rates)-0.1, 1.0+0.1*np.ptp(rates)])
+    plt.xlim([-0.25*len(model_names), len(x_labels)])
+    plt.ylim([0, 5*np.ptp(rates)])
     plt.legend(loc='center', bbox_to_anchor=(0.5, np.min(rates)-0.33))
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
