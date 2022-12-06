@@ -107,7 +107,9 @@ def main():
      path_to_dataset = args.dataset.replace('.pkl', '_mini.pkl') if args.minitest else args.dataset
      if not os.path.exists('./dataset/' + path_to_dataset):
           print(f"\t  Dataset ./dataset/{path_to_dataset} does not exist. Building from scratch.")
-          dataset = datasets.QM9(path='./dataset/', node_position=True, minitest=args.minitest)
+          dataset = datasets.QM9(path='./dataset/', node_position=True, minitest=args.minitest,
+                              atom_feature="default", bond_feature="default", mol_feature=None,
+                              with_hydrogen=False, kekulize=True)
           with open('./dataset/' + path_to_dataset, "wb") as f:
                pickle.dump(dataset, f)
           print(f"\t  Done building: ./dataset/{path_to_dataset}")
