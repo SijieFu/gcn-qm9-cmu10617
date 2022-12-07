@@ -64,12 +64,12 @@ def main():
                     args.num_s2s_step = params_dict["num_s2s_step"]
                elif args.model == "GCN" or args.model == "GFCN":
                     args.hidden_dim = "_".join([str(i) for i in params_dict["hidden_dims"]])
-                    concat_hidden = params_dict["concat_hidden"]
                     output_dim = params_dict.get("output_dim", 512)
                else:
                     print(f"Mismatching config ({args.load_params}) and model ({args.model})")
           except:
                print(f"Error parsing ({args.load_params}) for model ({args.model})")
+          concat_hidden = params_dict.get("concat_hidden", False)
           args.lr = params_dict["lr"]
           args.batch_size = params_dict["batch_size"]
      # dataset
@@ -177,6 +177,8 @@ def main():
           pickle.dump(scalers, f)
      print(f"\t Every target is now scaled with MinMaxScaler(). All scalers are saved to {model_path + out_file}_scalers.pkl")
 
+     if concat_hidden:
+          print(f"\t Concatenating hidden layers.")
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
                               hidden_dim = hidden_dim,
@@ -184,7 +186,8 @@ def main():
                               num_layer = num_layer,
                               num_gru_layer = num_gru_layer,
                               num_mlp_layer = num_mlp_layer,
-                              num_s2s_step = num_s2s_step)
+                              num_s2s_step = num_s2s_step,
+                              concat_hidden=concat_hidden)
      elif model == "GCN":
           t_model = models.GCN(input_dim = dataset.node_feature_dim,
                               hidden_dims = hidden_dims,
