@@ -1,5 +1,4 @@
-import os, sys
-import json
+import os, sys, pickle, json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +8,11 @@ def get_performance(metric_path):
     with open(metric_path, "r") as f:
         metric_dict = json.load(f)
     return metric_dict
-
+# Load scaler from path
+def load_scaler(scaler_path):
+    with open(scaler_path, "rb") as f:
+        scaler = pickle.load(f)
+    return scaler
 # Organize metrics into DataFrames
 def gather_metrics(model_path):
     path = model_path

@@ -171,7 +171,7 @@ def main():
           train_set.dataset.targets[task] = scaled_targert
           valid_set.dataset.targets[task] = scaled_targert
           test_set.dataset.targets[task] = scaled_targert
-     with open(f"{model_path + out_file}_scalers.pkl", 'wb') as f:
+     with open(f"{model_path + out_file}_scalers.scale", 'wb') as f:
           pickle.dump(scalers, f)
      print(f"\t Every target is now scaled with MinMaxScaler(). All scalers are saved to {model_path + out_file}_scalers.pkl")
 
