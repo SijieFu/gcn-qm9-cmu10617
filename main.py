@@ -62,7 +62,7 @@ def main():
                     args.num_gru_layer = params_dict["num_gru_layer"]
                     args.num_mlp_layer = params_dict["num_mlp_layer"]
                     args.num_s2s_step = params_dict["num_s2s_step"]
-               elif args.model == "GCN":
+               elif args.model == "GCN" or args.model == "GFCN":
                     args.hidden_dim = "_".join([str(i) for i in params_dict["hidden_dims"]])
                else:
                     print(f"Mismatching config ({args.load_params}) and model ({args.model})")
@@ -185,6 +185,10 @@ def main():
                               num_s2s_step = num_s2s_step)
      elif model == "GCN":
           t_model = models.GCN(input_dim = dataset.node_feature_dim,
+                              hidden_dims = hidden_dims,
+                              edge_input_dim = dataset.edge_feature_dim)
+     elif args.model == "GFCN":
+          t_model = models.NeuralFP(input_dim = dataset.node_feature_dim,
                               hidden_dims = hidden_dims,
                               edge_input_dim = dataset.edge_feature_dim)
      # task
