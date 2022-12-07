@@ -1,11 +1,11 @@
 #!/bin/bash
 
 echo "-----TRAINING MPNN MODEL WITHOUT DISTANCE-----"
-python main.py --model_path "./final_models/" --out_file "mpnn_no_distance_2" --model "MPNN" --load_params "mpnn_config.json" --epochs 100 --gpu > mpnn_no_distance_2.out
+python main.py --model_path "./final_models/" --out_file "mpnn_no_distance_concat" --model "MPNN" --load_params "mpnn_config.json" --epochs 100 --gpu > mpnn_no_distance_concat.out
 
 
 echo "-----TRAINING MPNN MODEL WITH DISTANCE-----"
-python main.py --model_path "./final_models/" --out_file "mpnn_distance_2" --model "MPNN" --load_params "mpnn_config.json" --epochs 100 --gpu --include_distance > mpnn_distance_2.out
+python main.py --model_path "./final_models/" --out_file "mpnn_distance_concat" --model "MPNN" --load_params "mpnn_config.json" --epochs 100 --gpu --include_distance > mpnn_distance_concat.out
 
 
 echo "-----TRAINING GCN MODEL WITHOUT DISTANCE-----"
