@@ -62,9 +62,12 @@ def main():
                     args.num_gru_layer = params_dict["num_gru_layer"]
                     args.num_mlp_layer = params_dict["num_mlp_layer"]
                     args.num_s2s_step = params_dict["num_s2s_step"]
-               elif args.model == "GCN" or args.model == "GFCN":
+               elif args.model == "GCN" or args.model == "GFCN" or args.model == "GAT":
                     args.hidden_dim = "_".join([str(i) for i in params_dict["hidden_dims"]])
                     output_dim = params_dict.get("output_dim", 512)
+                    if args.model == "GAT":
+                         num_head = params_dict.get("num_head", 1)
+                         negative_slope = params_dict.get("negative_slope", 0.2)
                else:
                     print(f"Mismatching config ({args.load_params}) and model ({args.model})")
           except:
@@ -83,12 +86,14 @@ def main():
      num_s2s_step = args.num_s2s_step
      if len(hidden) > 1:
           hidden_dims = [int(i) for i in hidden]
-          model = "GCN" if  "GCN" in args.model.upper() else "GFCN"
+          if "GCN" in args.model.upper(): model = "GCN"
+          elif "GFCN" in args.model.upper(): model = "GFCN"
+          elif "GAT" in args.model.upper(): model = "GAT"
      elif len(hidden) == 1:
           hidden_dim = int(hidden[0])
           model = "MPNN"
      if model == args.model:
-          print(f"---Training {model} model---")
+          print(f"$$$$$$$$$$ Training {model} model $$$$$$$$$$")
      else:
           print(f"Mismatch in models! -- set the '--model' flag")
           sys.exit()
@@ -187,17 +192,24 @@ def main():
                               num_gru_layer = num_gru_layer,
                               num_mlp_layer = num_mlp_layer,
                               num_s2s_step = num_s2s_step,
-                              concat_hidden=concat_hidden)
+                              concat_hidden = concat_hidden)
      elif model == "GCN":
           t_model = models.GCN(input_dim = dataset.node_feature_dim,
                               hidden_dims = hidden_dims,
                               edge_input_dim = dataset.edge_feature_dim,
-                              concat_hidden=concat_hidden)
-     elif args.model == "GFCN":
+                              concat_hidden = concat_hidden)
+     elif model == "GFCN":
           t_model = models.neuralfp.NeuralFingerprint(input_dim = dataset.node_feature_dim,
                               output_dim = output_dim,    
                               hidden_dims = hidden_dims,
                               edge_input_dim = dataset.edge_feature_dim,
+                              concat_hidden=concat_hidden)
+     elif model == "GAT":
+          t_model = models.GAT(input_dim = dataset.node_feature_dim,
+                              hidden_dims = hidden_dims,
+                              edge_input_dim = dataset.edge_feature_dim,
+                              num_head = num_head,
+                              negative_slope = negative_slope,
                               concat_hidden=concat_hidden)
      # task
      task = tasks.PropertyPrediction(t_model, task=dataset.tasks)
