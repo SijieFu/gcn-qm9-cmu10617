@@ -81,7 +81,7 @@ def main():
      num_s2s_step = args.num_s2s_step
      if len(hidden) > 1:
           hidden_dims = [int(i) for i in hidden]
-          model = "GCN"
+          model = "GCN" if  "GCN" in args.model.upper() else "GFCN"
      elif len(hidden) == 1:
           hidden_dim = int(hidden[0])
           model = "MPNN"
@@ -188,7 +188,8 @@ def main():
                               hidden_dims = hidden_dims,
                               edge_input_dim = dataset.edge_feature_dim)
      elif args.model == "GFCN":
-          t_model = models.NeuralFP(input_dim = dataset.node_feature_dim,
+          t_model = models.neuralfp.NeuralFingerprint(input_dim = dataset.node_feature_dim,
+                              output_dim = 512,    
                               hidden_dims = hidden_dims,
                               edge_input_dim = dataset.edge_feature_dim)
      # task
