@@ -147,6 +147,7 @@ class Engine(core.Configurable):
 
         train_all_maes, val_all_maes = [], []
         for epoch in self.meter(num_epoch):
+            model.train()
             sampler.set_epoch(epoch)
 
             metrics = []
