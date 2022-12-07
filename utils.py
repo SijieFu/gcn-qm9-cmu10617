@@ -11,43 +11,42 @@ def get_performance(metric_path):
 # Load scaler from path
 def load_scaler(scaler_path):
     with open(scaler_path, "rb") as f:
-        scaler = pickle.load(f)
+        scaler = pickle.load(f)  
     return scaler
 # Organize metrics into DataFrames
 def gather_metrics(model_path):
     path = model_path
-    maes = []
-    rsmes = []
-    val_maes = []
+    maes, rsmes, val_maes = [], [], []
     for model_folder in os.listdir(path):
+        print(f"current model = {model_folder}")
         model_val_maes = np.zeros((100, 12))
         model_folder = model_folder + "/"
+        scaler = load_scaler(path + model_folder + model_folder[:-1] + "_scalers.scale")
         for pot_metric_file in os.listdir(path+model_folder):
             if "test_metric.json" in pot_metric_file:
-                metric_file = pot_metric_file
-                metric_dict = get_performance(path + model_folder + metric_file)
-                mae_dict = {"model": model_folder[:-1]}
-                rmse_dict = {"model": model_folder[:-1]}
+                print("\tfound test metric...")
+                metric_dict = get_performance(path + model_folder + pot_metric_file)
+                mae_dict, rmse_dict = {"model": model_folder[:-1]}, {"model": model_folder[:-1]}
                 for key in metric_dict.keys():
                     if "mean absolute error" in key:
                         mae_dict[key.split("[")[1][:-1]] = metric_dict[key]
+                        print(scaler.inverse_transform(metric_dict[key]))
                     elif "root mean squared error" in key:
                         rmse_dict[key.split("[")[1][:-1]] = metric_dict[key]
                 maes.append(mae_dict)
                 rsmes.append(rmse_dict)
+                print("\ttest metric logged.")
             elif "val_maes.json" in pot_metric_file:
-                metric_file = pot_metric_file
-                metric_dict = get_performance(path + model_folder + metric_file)
+                print("\tfound val MAEs...")
+                metric_dict = get_performance(path + model_folder + pot_metric_file)
                 val_mae_dict = {"model": model_folder[:-1]}
                 for key in metric_dict.keys():
                     val_mae_dict[key] = np.mean(metric_dict[key])
                 val_maes.append(val_mae_dict)
-        mae_df = pd.DataFrame(maes)
-        rmse_df = pd.DataFrame(rsmes)
-        val_maes_df = pd.DataFrame(val_maes).T
+                print("\tval MAEs logged.")
+        mae_df, rmse_df, val_maes_df = pd.DataFrame(maes), pd.DataFrame(rsmes), pd.DataFrame(val_maes).T
         val_maes_df = val_maes_df.rename(columns=val_maes_df.iloc[0]).drop(val_maes_df.index[0])
     return mae_df, rmse_df, val_maes_df
-
 # Make bar plot figure
 def bar_plot(df, save_name="bar_plot.png", barwidth=0.2):
     # make figure and axes
