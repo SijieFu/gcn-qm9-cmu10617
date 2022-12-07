@@ -1,5 +1,7 @@
 {
     "hidden_dims": [256, 128, 64],
     "lr": 1e-3,
-    "batch_size": 128
+    "batch_size": 128,
+    "concat_hidden": false,
+    "output_dim": 128
 }

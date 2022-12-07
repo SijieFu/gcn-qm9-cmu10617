@@ -64,6 +64,8 @@ def main():
                     args.num_s2s_step = params_dict["num_s2s_step"]
                elif args.model == "GCN" or args.model == "GFCN":
                     args.hidden_dim = "_".join([str(i) for i in params_dict["hidden_dims"]])
+                    concat_hidden = params_dict["concat_hidden"]
+                    output_dim = params_dict.get("output_dim", 512)
                else:
                     print(f"Mismatching config ({args.load_params}) and model ({args.model})")
           except:
@@ -186,12 +188,14 @@ def main():
      elif model == "GCN":
           t_model = models.GCN(input_dim = dataset.node_feature_dim,
                               hidden_dims = hidden_dims,
-                              edge_input_dim = dataset.edge_feature_dim)
+                              edge_input_dim = dataset.edge_feature_dim,
+                              concat_hidden=concat_hidden)
      elif args.model == "GFCN":
           t_model = models.neuralfp.NeuralFingerprint(input_dim = dataset.node_feature_dim,
-                              output_dim = 512,    
+                              output_dim = output_dim,    
                               hidden_dims = hidden_dims,
-                              edge_input_dim = dataset.edge_feature_dim)
+                              edge_input_dim = dataset.edge_feature_dim,
+                              concat_hidden=concat_hidden)
      # task
      task = tasks.PropertyPrediction(t_model, task=dataset.tasks)
      # optimizer
