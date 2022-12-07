@@ -211,6 +211,7 @@ def main():
           solver.load(pickle_in)
           print(f"\t Loaded model: {pickle_in}")
      else:
+          ### Trainning the model
           train_all_maes, val_all_maes = solver.train(num_epoch=epochs) # MAEs across all tasks
           train_ave_maes = np.mean(train_all_maes, axis=1)
           val_ave_maes = np.mean(val_all_maes, axis=1)
