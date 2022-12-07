@@ -82,7 +82,7 @@ def bar_plot(df, save_name="bar_plot.png", barwidth=0.2):
 
 def mae_plot(df, save_name="mae_plot.png"):
     # make figure and axes
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(15, 6))
     # aesthetic settings for plot
     font = 'Times New Roman'
     SMALL_SIZE, MEDIUM_SIZE, BIGGER_SIZE = 16, 20, 24
@@ -103,7 +103,7 @@ def mae_plot(df, save_name="mae_plot.png"):
     x_labels = np.arange(df.shape[0])
     for i, n in enumerate(model_names):
         plt.plot(x_labels, df[n].tolist(), label=f'{n}', linewidth=2.0)
-    plt.title('Comparison of Average Validation MAE over 100 Epochs', fontdict={"size": BIGGER_SIZE})
+    plt.title('Comparison of Average Validation MAE\nover 100 Epochs', fontdict={"size": BIGGER_SIZE})
     plt.xlabel('Epoch', fontdict={"size": SMALL_SIZE})
     plt.ylabel('Average Validation MAE (across all objectives)', fontdict={"size": SMALL_SIZE})
     plt.xlim([0, 100])
