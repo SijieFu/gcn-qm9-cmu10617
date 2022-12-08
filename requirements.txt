@@ -12,3 +12,4 @@ scipy
 gdown
 wandb
 scikit-learn
+pandas
