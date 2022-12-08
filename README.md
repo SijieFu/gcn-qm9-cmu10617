@@ -20,7 +20,7 @@ Install the requirements:
     $ pip install -r requirements.txt
 
 # Training a model with `main.py`
-##### TAs: `use --minitest flag to train on 100 samples for fast check of our code`
+##### TAs: `add the --minitest flag to train on 100 samples for a fast check of our code`
 ##### Training a MPNN with distance `use --gpu if you have GPUs`
     $ python main.py --model_path "./my_models/" --model "MPNN" --out_file "mpnn" --load_params "mpnn_config.json" --epochs 100 --gpu --include_distance
 ##### Training a GCN with distance `use --gpu if you have GPUs`
