@@ -13,9 +13,7 @@ Next install pytorch (Linux):
 
 Now install pytorch-scatter and pytorch-cluster (Linux): 
     
-    $ conda install pytorch-scatter -c pyg
-
-    $ conda install pytorch-cluster -c pyg
+    $ conda install pytorch-scatter pytorch-cluster -c pyg
 
 Install the requirements: 
 
