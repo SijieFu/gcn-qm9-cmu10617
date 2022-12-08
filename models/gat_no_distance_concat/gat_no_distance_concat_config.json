@@ -1,0 +1,8 @@
+{
+    "hidden_dims": [256, 128, 64],
+    "lr": 1e-3,
+    "batch_size": 128,
+    "num_head": 2,
+    "negative_slope": 0.2,
+    "concat_hidden": true
+}
