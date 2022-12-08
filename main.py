@@ -34,7 +34,6 @@ parser.add_argument('--load_model', action="store_true", default=False, help='wh
 parser.add_argument('--out_file', type=str, default="", help='name for output file (default path to save is ./models/)')
 parser.add_argument('--model', type=str, default='GCN', help='model to train GCN or MPNN (default is GCN)')
 parser.add_argument('--load_params', type=str, default="", help='to load hyperparameters and not have to set them')
-parser.add_argument('--concat_hidden', action='store_true', default=False, help='to load hyperparameters and not have to set them')
 parser.add_argument('--hidden_dim', type=str, default="256", help='underscore separated string, list for GCN, [single] for MPNN')
 parser.add_argument('--num_layer', type=int, default=1, help='num layers for MPNN')
 parser.add_argument('--num_gru_layer', type=int, default=1, help='num gru layers for MPNN')
@@ -74,8 +73,6 @@ def main():
           except:
                print(f"Error parsing ({args.load_params}) for model ({args.model})")
           concat_hidden = params_dict.get("concat_hidden", False)
-          if args.concat_hidden:
-               concat_hidden = False
           edge_input_dim = params_dict.get("edge_input_dim", -1)
           args.lr = params_dict["lr"]
           args.batch_size = params_dict["batch_size"]
