@@ -7,6 +7,7 @@ dataset/*
 !dataset/gdb9.csv
 !dataset/*mini*
 models/*.pkl
+*trash*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
