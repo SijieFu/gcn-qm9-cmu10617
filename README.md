@@ -9,13 +9,13 @@ First create and activate the environment:
 
 Next install pytorch (Linux): 
 
-      conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge
+      $ conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge
 
 Now install pytorch-scatter and pytorch-cluster (Linux): 
     
-      conda install pytorch-scatter -c pyg
+      $ conda install pytorch-scatter -c pyg
 
-      conda install pytorch-cluster -c pyg
+      $ conda install pytorch-cluster -c pyg
 
 Install the requirements: 
 
