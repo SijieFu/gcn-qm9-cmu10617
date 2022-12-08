@@ -1,6 +1,6 @@
 # gcn-qm9-cmu10617 : [final models here](https://drive.google.com/drive/folders/1Vfkx__LlilUYKSYfGGRH7IdNWCK18_SK?usp=share_link)
-Final team project repo for CMU 10-617 (Fall 2022)
-TorchDrug is forked from:[here](https://github.com/DeepGraphLearning/torchdrug.git) and modifications have been made
+Final team project repo for CMU 10-617 (Fall 2022). 
+TorchDrug is forked from: [here](https://github.com/DeepGraphLearning/torchdrug.git) and modifications have been made. 
 # Clone the repo
     $ git clone https://github.com/SijieFu/gcn-qm9-cmu10617.git
 # Building the environent
