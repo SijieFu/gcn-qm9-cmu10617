@@ -109,7 +109,7 @@ def mae_plot(df, save_name="mae_plot.png"):
     for tick in ax.get_xticklabels():
         #tick.set_fontname(font)
         tick.set_fontsize(SMALL_SIZE)
-
+    df = df.reindex(sorted(df.columns), axis=1)
     model_names = list(df.columns)
     x_labels = np.arange(df.shape[0])
     for i, n in enumerate(model_names):
@@ -119,6 +119,6 @@ def mae_plot(df, save_name="mae_plot.png"):
     plt.ylabel('Average Validation MAE (across all objectives)', fontdict={"size": SMALL_SIZE})
     plt.xlim([0, 100])
     plt.ylim([0, 0.03])
-    plt.legend(loc='center', bbox_to_anchor=(0.5, 0.9), ncol=(len(model_names)//2))
+    plt.legend(loc='center', bbox_to_anchor=(0.5, 0.9), ncol=(len(model_names)//3))
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
