@@ -6,5 +6,6 @@
     "num_s2s_step": 1,
     "lr": 1e-3,
     "batch_size": 128,
-    "concat_hidden": true
+    "concat_hidden": true,
+    "edge_input_dim": 1
 }

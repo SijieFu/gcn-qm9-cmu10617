@@ -74,8 +74,7 @@ def main():
           except:
                print(f"Error parsing ({args.load_params}) for model ({args.model})")
           concat_hidden = params_dict.get("concat_hidden", False)
-          if args.concat_hidden:
-               concat_hidden = False
+          edge_input_dim = params_dict.get("edge_input_dim", -1)
           args.lr = params_dict["lr"]
           args.batch_size = params_dict["batch_size"]
      # dataset
@@ -187,10 +186,17 @@ def main():
 
      if concat_hidden:
           print(f"\t Concatenating hidden layers.")
+     if edge_input_dim == -1 or 1:
+          edge_input_dim = dataset.edge_feature_dim
+          print(f"\t Node update will include information from edges.")
+     elif edge_input_dim == 0:
+          edge_input_dim = None
+          print(f"\t Node update will NOT include information from edges.")
+     
      if model == "MPNN":
           t_model = models.MPNN(input_dim = dataset.node_feature_dim,
                               hidden_dim = hidden_dim,
-                              edge_input_dim = dataset.edge_feature_dim,
+                              edge_input_dim = edge_input_dim,
                               num_layer = num_layer,
                               num_gru_layer = num_gru_layer,
                               num_mlp_layer = num_mlp_layer,
@@ -199,18 +205,18 @@ def main():
      elif model == "GCN":
           t_model = models.GCN(input_dim = dataset.node_feature_dim,
                               hidden_dims = hidden_dims,
-                              edge_input_dim = dataset.edge_feature_dim,
+                              edge_input_dim = edge_input_dim,
                               concat_hidden = concat_hidden)
      elif model == "GFCN":
           t_model = models.neuralfp.NeuralFingerprint(input_dim = dataset.node_feature_dim,
                               output_dim = output_dim,    
                               hidden_dims = hidden_dims,
-                              edge_input_dim = dataset.edge_feature_dim,
+                              edge_input_dim = edge_input_dim,
                               concat_hidden=concat_hidden)
      elif model == "GAT":
           t_model = models.GAT(input_dim = dataset.node_feature_dim,
                               hidden_dims = hidden_dims,
-                              edge_input_dim = dataset.edge_feature_dim,
+                              edge_input_dim = edge_input_dim,
                               num_head = num_head,
                               negative_slope = negative_slope,
                               concat_hidden=concat_hidden)

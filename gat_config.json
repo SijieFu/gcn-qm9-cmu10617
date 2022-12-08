@@ -4,5 +4,6 @@
     "batch_size": 128,
     "num_head": 2,
     "negative_slope": 0.2,
-    "concat_hidden": true
+    "concat_hidden": true,
+    "edge_input_dim": 1
 }
