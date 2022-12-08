@@ -19,5 +19,9 @@ Now install pytorch-scatter and pytorch-cluster (Linux):
 
 Install the requirements: 
 
-`pip install -r requirements.txt`
+      $ pip install -r requirements.txt
+
 # Training a model with `main.py`
+##### Training a MPNN
+##### Training a GCN
+##### Training a GAT
