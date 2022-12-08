@@ -65,27 +65,29 @@ def bar_plot(df, save_name="bar_plot.png", barwidth=0.2, distance=False):
     for tick in ax.get_xticklabels():
         #tick.set_fontname(font)
         tick.set_fontsize(SMALL_SIZE)
-
+    if not distance:
+        df = df.loc[[save_name[4:-4] in x for x in df["model"]]]
+    else:
+        df = df.loc[["no_distance" not in x for x in df["model"]]]
+    df = df.sort_values("model")
+    if distance:
+        colors = ["lightsteelblue", "powderblue", "lavender", "lightskyblue", "lightcyan", "skyblue"]
+    else:
+        colors = ["mistyrose", "lightsalmon", "peachpuff", "lightcoral", "seashell", "bisque"]
     model_names = list(df.iloc[:, 0])
     x_labels = list(df.columns[1:])
     rates = df.iloc[:, 1:].to_numpy().T
     count = 0
     for i, n in enumerate(model_names):
-        if distance:
-            if "no_distance" not in n:
-                count += 1
-                plt.bar(np.arange(len(x_labels))+count*barwidth, rates[:,i], width=barwidth, label=f'{n}')
-        elif "no_distance" in n:
-            count += 1
-            plt.bar(np.arange(len(x_labels))+count*barwidth, rates[:,i], width=barwidth, label=f'{n}')
+        plt.bar(np.arange(len(x_labels))+i*barwidth, rates[:,i], width=barwidth, label=f'{n}')
     plt.xlabel(f"property", fontdict={"size": SMALL_SIZE})
     plt.ylabel(f"min-max scaled metric", fontdict={"size": SMALL_SIZE})
     title_add = "distance" if distance else "no distance"
     plt.title(f"Comparison of MAE (for each objective)\non the QM9 Dataset with {title_add}", fontdict={"size": BIGGER_SIZE})
     plt.xticks(np.arange(len(x_labels))+(len(model_names)-1)/2*barwidth, x_labels)
-    plt.xlim([len(model_names), len(x_labels)])
+    plt.xlim([-0.4, len(x_labels)])
     plt.ylim([0, 1.25*np.ptp(rates)])
-    plt.legend(loc='center', bbox_to_anchor=(0.5, 0.9), ncol=count)
+    plt.legend(loc='center', bbox_to_anchor=(0.5, 0.9), ncol=len(model_names)//2)
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
 
