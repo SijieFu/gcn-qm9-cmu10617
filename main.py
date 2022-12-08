@@ -55,7 +55,7 @@ def main():
      args = parser.parse_args()
      # load model hyper parameters from config
      if args.load_params != "":
-          params_dict = json.load(open(args.load_params, "r"))
+          params_dict = json.load(open('./configs/'+args.load_params, "r"))
           try:
                if args.model == 'MPNN':
                     args.hidden_dim = str(params_dict["hidden_dim"])
@@ -134,7 +134,7 @@ def main():
      json_out = model_path + out_file + ".json"
      pickle_out = model_path + out_file + ".pkl"
      if args.load_params != "":
-          os.system(f"cp {args.load_params} {model_path + out_file}_config.json")
+          os.system(f"cp ./configs/{args.load_params} {model_path + out_file}_config.json")
      
      print(f"\t  Model configuration will be saved to {json_out}\n"
            f"\t  Solver will be saved to {pickle_out}")
