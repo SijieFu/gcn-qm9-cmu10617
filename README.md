@@ -33,12 +33,4 @@ Install the requirements:
 
 `pip install -r requirements.txt`
 
-Go back to the root of the repo: 
-
-`cd ..`
-
-Add `QM9.pkl` to the repo from: https://drive.google.com/file/d/1HpZrkkrR_iqbTLPCOglJh9lsxfc7qYVM/view?usp=share_link
-
-Test the MPNN (if you want to use GPUs run the following command in the terminal `export CUDA_VISIBLE_DEVICES=1` to use the A30 on Boltzmann): 
-
 `python train_MPNN.py`
