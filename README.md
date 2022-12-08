@@ -23,8 +23,8 @@ Install the requirements:
 
 # Training a model with `main.py`
 ##### Training a MPNN with distance `use --gpu if you have GPUs`
-      $ python main.py --model_path "./my_models/" --out_file "mpnn_model" --load_params "mpnn_config.json" --epochs 100 --gpu --include_distance
+      $ python main.py --model_path "./my_models/" --out_file "mpnn" --load_params "mpnn_config.json" --epochs 100 --gpu --include_distance
 ##### Training a GCN with distance
-      $ python main.py --model_path "./my_models/" --out_file "gcn_model" --load_params "gcn_config.json" --epochs 100 --gpu --include_distance
+      $ python main.py --model_path "./my_models/" --out_file "gcn" --load_params "gcn_config.json" --epochs 100 --gpu --include_distance
 ##### Training a GAT with distance
-      $ python main.py --model_path "./my_models/" --out_file "gat_model" --load_params "gat_config.json" --epochs 100 --gpu --include_distance
+      $ python main.py --model_path "./my_models/" --out_file "gat" --load_params "gat_config.json" --epochs 100 --gpu --include_distance
