@@ -73,13 +73,13 @@ def bar_plot(df, save_name="bar_plot.png", barwidth=0.2, distance=False):
     if distance:
         colors = ["lightsteelblue", "powderblue", "lavender", "lightskyblue", "lightcyan", "skyblue"]
     else:
-        colors = ["mistyrose", "lightsalmon", "peachpuff", "lightcoral", "seashell", "bisque"]
+        colors = ["mistyrose", "lightsalmon", "peachpuff", "lightcoral", "tomato", "bisque"]
     model_names = list(df.iloc[:, 0])
     x_labels = list(df.columns[1:])
     rates = df.iloc[:, 1:].to_numpy().T
     count = 0
     for i, n in enumerate(model_names):
-        plt.bar(np.arange(len(x_labels))+i*barwidth, rates[:,i], width=barwidth, label=f'{n}')
+        plt.bar(np.arange(len(x_labels))+i*barwidth, rates[:,i], width=barwidth, label=f'{n}', color=colors[i])
     plt.xlabel(f"property", fontdict={"size": SMALL_SIZE})
     plt.ylabel(f"min-max scaled metric", fontdict={"size": SMALL_SIZE})
     title_add = "distance" if distance else "no distance"
