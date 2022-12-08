@@ -74,6 +74,8 @@ def main():
           except:
                print(f"Error parsing ({args.load_params}) for model ({args.model})")
           concat_hidden = params_dict.get("concat_hidden", False)
+          if args.concat_hidden:
+               concat_hidden = False
           edge_input_dim = params_dict.get("edge_input_dim", -1)
           args.lr = params_dict["lr"]
           args.batch_size = params_dict["batch_size"]
