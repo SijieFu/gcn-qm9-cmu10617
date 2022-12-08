@@ -47,7 +47,7 @@ def gather_metrics(model_path):
         val_maes_df = val_maes_df.rename(columns=val_maes_df.iloc[0]).drop(val_maes_df.index[0])
     return mae_df, rmse_df, val_maes_df
 # Make bar plot figure
-def bar_plot(df, save_name="bar_plot.png", barwidth=0.2):
+def bar_plot(df, save_name="bar_plot.png", barwidth=0.2, distance=False):
     # make figure and axes
     fig, ax = plt.subplots(figsize=(15, 6))
     # aesthetic settings for plot
@@ -69,15 +69,23 @@ def bar_plot(df, save_name="bar_plot.png", barwidth=0.2):
     model_names = list(df.iloc[:, 0])
     x_labels = list(df.columns[1:])
     rates = df.iloc[:, 1:].to_numpy().T
+    count = 0
     for i, n in enumerate(model_names):
-        plt.bar(np.arange(len(x_labels))+i*barwidth, rates[:,i], width=barwidth, label=f'{n}')
+        if distance:
+            if "no_distance" not in n:
+                count += 1
+                plt.bar(np.arange(len(x_labels))+count*barwidth, rates[:,i], width=barwidth, label=f'{n}')
+        elif "no_distance" in n:
+            count += 1
+            plt.bar(np.arange(len(x_labels))+count*barwidth, rates[:,i], width=barwidth, label=f'{n}')
     plt.xlabel(f"property", fontdict={"size": SMALL_SIZE})
     plt.ylabel(f"min-max scaled metric", fontdict={"size": SMALL_SIZE})
-    plt.title(f"Comparison of MAE (for each objective) on the QM9 Dataset", fontdict={"size": BIGGER_SIZE})
+    title_add = "distance" if distance else "no distance"
+    plt.title(f"Comparison of MAE (for each objective)\non the QM9 Dataset with {title_add}", fontdict={"size": BIGGER_SIZE})
     plt.xticks(np.arange(len(x_labels))+(len(model_names)-1)/2*barwidth, x_labels)
-    plt.xlim([-0.25*len(model_names), len(x_labels)])
+    plt.xlim([len(model_names), len(x_labels)])
     plt.ylim([0, 1.25*np.ptp(rates)])
-    plt.legend(loc='center', bbox_to_anchor=(0.5, np.min(rates)-0.33))
+    plt.legend(loc='center', bbox_to_anchor=(0.5, 0.9), ncol=count)
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -109,6 +117,6 @@ def mae_plot(df, save_name="mae_plot.png"):
     plt.ylabel('Average Validation MAE (across all objectives)', fontdict={"size": SMALL_SIZE})
     plt.xlim([0, 100])
     plt.ylim([0, 0.03])
-    plt.legend()
+    plt.legend(loc='center', bbox_to_anchor=(0.5, 0.9), ncol=(len(model_names)//2))
     fig.savefig(save_name, dpi=300, bbox_inches='tight')
     plt.show()
