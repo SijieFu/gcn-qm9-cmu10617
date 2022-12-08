@@ -21,7 +21,7 @@ def gather_metrics(model_path):
         print(f"current model = {model_folder}")
         model_val_maes = np.zeros((100, 12))
         model_folder = model_folder + "/"
-        scaler = load_scaler(path + model_folder + model_folder[:-1] + "_scalers.scale")
+        #scaler = load_scaler(path + model_folder + model_folder[:-1] + "_scalers.scale")
         for pot_metric_file in os.listdir(path+model_folder):
             if "test_metric.json" in pot_metric_file:
                 print("\tfound test metric...")
@@ -30,7 +30,6 @@ def gather_metrics(model_path):
                 for key in metric_dict.keys():
                     if "mean absolute error" in key:
                         mae_dict[key.split("[")[1][:-1]] = metric_dict[key]
-                        print(scaler.inverse_transform(metric_dict[key]))
                     elif "root mean squared error" in key:
                         rmse_dict[key.split("[")[1][:-1]] = metric_dict[key]
                 maes.append(mae_dict)
